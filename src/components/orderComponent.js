@@ -10,7 +10,9 @@ export default function OrderCard (props) {
     <View style={orderStyle.container}>
       <View style={orderStyle.prodRow}>
         <View style={orderStyle.prodCol}>
-          <Text numberOfLines={3} style={orderStyle.lblProdName}>Product Name</Text>
+          <Text numberOfLines={3} style={orderStyle.lblProdName}>
+            Product Name
+          </Text>
           <View style={orderStyle.textRowContainer}>
             <Text style={orderStyle.lblQtyName}>Quantity :</Text>
             <Text style={orderStyle.lblQtyValue}>1</Text>
@@ -64,25 +66,25 @@ const orderStyle = StyleSheet.create ({
   },
   prodRow: {
     marginHorizontal: 15,
-    marginTop:15,
+    marginTop: 15,
     flexDirection: 'row',
   },
   prodCol: {
     flex: 1,
     flexDirection: 'column',
-},
-imageContainer: {
-    justifyContent:'flex-end',
+  },
+  imageContainer: {
+    justifyContent: 'flex-end',
   },
   orderImage: {
-    marginRight:30,
+    marginRight: 30,
     width: wp (20),
     height: hp (8),
     alignSelf: 'flex-end',
   },
   textContainer: {
     marginTop: 10,
-    marginBottom:20,
+    marginBottom: 20,
     marginHorizontal: 15,
   },
   textRowContainer: {
@@ -96,9 +98,9 @@ imageContainer: {
     fontSize: 10,
     flexDirection: 'column',
   },
-  lblQtyValue:{
+  lblQtyValue: {
     fontSize: 10,
-    marginLeft:5,
+    marginLeft: 5,
   },
   allLblValue: {
     fontSize: 10,
@@ -117,7 +119,7 @@ imageContainer: {
     borderRadius: 10,
     justifyContent: 'center',
     height: hp (3),
-    width: wp(72),
+    width: wp (72),
   },
   lineStyle: {
     marginVertical: 10,

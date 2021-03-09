@@ -10,7 +10,9 @@ import {SliderBox} from 'react-native-image-slider-box';
 import CartCard from '../components/cartCard';
 import FilterScreen from './filterScreen';
 
+
 export default class DetailScreen extends Component {
+  
   constructor (props) {
     super (props);
     this.state = {
@@ -45,7 +47,7 @@ export default class DetailScreen extends Component {
         </ScrollView>
         <View style={styles.btnView}>
           <View style={styles.btn}>
-            <Button title="Buy" raised={true} />
+            <Button title="Buy" raised={true} onPress={() => this.props.navigation.navigate ('CheckoutScreen')}/>
           </View>
           <View style={styles.btn}>
             <Button title="Add to Cart" raised={true} />

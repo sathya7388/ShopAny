@@ -11,12 +11,17 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {useNavigation} from '@react-navigation/native';
 
 export default function CartScreen () {
+  const navigation = useNavigation ();
   return (
     <ScrollView>
-      <View style={{flex: 1, flexDirection: 'column'}}>
+      <View style={{flex: 1, flexDirection: 'column',}}>
         <CartCard />
+        <CartCard />
+        {/* <CartCard /> */}
+        {/* <CartCard /> */}
         <View style={cart.priceBreakdown}>
           <Text>Price Detail</Text>
           <View
@@ -58,20 +63,14 @@ export default function CartScreen () {
           }}
         />
         <View style={cart.btnorderview}>
-          <TouchableOpacity style={cart.btnPlaceOrderContainer}>
-            <Text style={cart.txtPlaceOrder}>Place Order</Text>
+          <TouchableOpacity style={cart.btnPlaceOrderContainer}
+           onPress={() => navigation.navigate ('CheckoutScreen')}>
+            <Text style={cart.txtPlaceOrder}>Continue to Checkout</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={cart.saveView}>
-          <View style={cart.saveTitle}>
-            <Text>Saved For Later</Text>
-          </View>
-        </View>
       </View>
-      <CartCard />
-      <CartCard />
-      <CartCard />
+
     </ScrollView>
   );
 }
@@ -91,7 +90,7 @@ const cart = StyleSheet.create ({
   },
   priceDetailRow: {
     flexDirection: 'row',
-    marginVertical:2,
+    marginVertical: 2,
   },
   priceBDText: {
     flexDirection: 'column',

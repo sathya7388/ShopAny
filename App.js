@@ -20,31 +20,45 @@ import ProfileScreen from './src/screens/profileScreen';
 import CurrentOrderScreen from './src/screens/currentOrderScreen';
 import PastOrderScreen from './src/screens/pastOrderScreen';
 import CartScreen from './src/screens/cartScreen';
+import SaveForLaterScreen from './src/screens/saveForLaterScreen';
 import FavoriteScreen from './src/screens/FavoriteScreen';
+import CheckoutScreen from './src/screens/checkoutScreen';
+
+import Header from './src/components/header';
 
 const Stack = createStackNavigator ();
 const Tab = createBottomTabNavigator ();
 const TopTab = createMaterialTopTabNavigator ();
+// const CartTopTab = createMaterialTopTabNavigator ();
 
 function HomeStack () {
   return (
     <Stack.Navigator
       // initialRouteName="Home"
       screenOptions={{
-        headerStyle: {backgroundColor: '#42f44b'},
-        headerTintColor: '#fff',
-        headerTitleStyle: {fontWeight: 'bold'},
+        // headerShown: false
+        // headerStyle: {backgroundColor: '#ffffff'},
+        // headerTintColor: '#fff',
+        // headerTitleStyle: {fontWeight: 'bold'},
       }}
     >
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{title: 'Home Page'}}
+        options={{
+          title: 'Home Page',
+          // headerTitle: props => <Header {...props} />,
+        }}
       />
       <Stack.Screen
         name="DetailScreen"
         component={DetailScreen}
         options={{title: 'Product Detail'}}
+      />
+      <Stack.Screen
+        name="CheckoutScreen"
+        component={CheckoutScreen}
+        options={{title: 'Checkout'}}
       />
       <Stack.Screen
         name="FilterScreen"
@@ -54,7 +68,7 @@ function HomeStack () {
       <Stack.Screen
         name="ProfileScreen"
         component={ProfileScreen}
-        options={{title: 'Cart'}}
+        options={{title: 'Account'}}
       />
     </Stack.Navigator>
   );
@@ -79,6 +93,26 @@ function OrderTopTab () {
     </TopTab.Navigator>
   );
 }
+function CartTopTab () {
+  return (
+    <TopTab.Navigator>
+      <TopTab.Screen
+        name="CartScreen"
+        component={CartScreen}
+        options={{
+          tabBarLabel: 'Cart',
+        }}
+      />
+      <TopTab.Screen
+        name="SaveForLaterScreen"
+        component={SaveForLaterScreen}
+        options={{
+          tabBarLabel: 'Saved For Later',
+        }}
+      />
+    </TopTab.Navigator>
+  );
+}
 class App extends React.Component {
   render () {
     return (
@@ -87,6 +121,11 @@ class App extends React.Component {
           // initialRouteName="Feed"
           tabBarOptions={{
             activeTintColor: '#42f44b',
+          }}
+          screenOptions={{
+            headerStyle: {backgroundColor: '#42f44b'},
+            headerTintColor: '#fff',
+            headerTitleStyle: {fontWeight: 'bold'},
           }}
         >
           <Tab.Screen
@@ -112,7 +151,7 @@ class App extends React.Component {
           />
           <Tab.Screen
             name="CartScreen"
-            component={CartScreen}
+            component={CartTopTab}
             options={{
               tabBarLabel: 'Cart',
               tabBarIcon: ({focused, color, size}) => (

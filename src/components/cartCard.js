@@ -37,7 +37,7 @@ export default function CartCard () {
     }
   };
   return (
-    <View>
+    <View style={cardStyle.container}>
       <View style={cardStyle.cartContainer}>
         <View style={cardStyle.cartCard}>
           <View style={cardStyle.cartContent}>
@@ -76,6 +76,7 @@ export default function CartCard () {
             </View>
           </View>
         </View>
+        <View style={cardStyle.lineStyle} />
         <View style={cardStyle.btnorderview}>
           <TouchableOpacity style={cardStyle.btnPlaceOrderContainer}>
             <Text style={cardStyle.txtPlaceOrder}>Save for Later</Text>
@@ -85,16 +86,22 @@ export default function CartCard () {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={cardStyle.lineStyle} />
     </View>
   );
 }
 
 const cardStyle = StyleSheet.create ({
+  container: {
+    elevation: 5,
+    borderRadius: 8,
+    marginHorizontal: 10,
+    marginVertical: 10,
+  },
   cartContainer: {
     flexDirection: 'column',
     backgroundColor: '#fff',
-    elevation: 5,
+    borderRadius: 8,
+    // elevation: 5,
   },
   cartCard: {
     flexDirection: 'row',
@@ -144,15 +151,17 @@ const cardStyle = StyleSheet.create ({
     width: 20,
     marginHorizontal: 10,
   },
-  lineStyle:{
-    backgroundColor:'#E0E0E0',
-    height:8,
+  lineStyle: {
+    backgroundColor: '#E0E0E0',
+    height: 1,
+    marginHorizontal:10,
   },
   btnorderview: {
-    flexDirection:'row',
+    flexDirection: 'row',
     backgroundColor: '#fff',
     paddingVertical: 10,
     alignItems: 'center',
+    borderRadius: 8,
   },
   btnPlaceOrderContainer: {
     elevation: 8,
@@ -160,7 +169,7 @@ const cardStyle = StyleSheet.create ({
     borderRadius: 2,
     paddingVertical: 4,
     paddingHorizontal: 30,
-    marginHorizontal:20,
+    marginHorizontal: 20,
     width: wp (40),
   },
   txtPlaceOrder: {
