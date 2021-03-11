@@ -73,6 +73,33 @@ function HomeStack () {
     </Stack.Navigator>
   );
 }
+function cartStack () {
+  return (
+    <Stack.Navigator
+      // initialRouteName="Home"
+      screenOptions={{
+        // headerShown: false,
+        // headerStyle: {backgroundColor: '#ffffff'},
+        // headerTintColor: '#fff',
+        // headerTitleStyle: {fontWeight: 'bold'},
+      }}
+    >
+      <Stack.Screen
+        name="cart"
+        component={CartTopTab}
+        options={{
+          headerShown: false,
+          // headerTitle: props => <Header {...props} />,
+        }}
+      />
+      <Stack.Screen
+        name="CheckoutScreen"
+        component={CheckoutScreen}
+        options={{title: 'Checkout'}}
+      />
+    </Stack.Navigator>
+  );
+}
 function OrderTopTab () {
   return (
     <TopTab.Navigator>
@@ -151,7 +178,7 @@ class App extends React.Component {
           />
           <Tab.Screen
             name="CartScreen"
-            component={CartTopTab}
+            component={cartStack}
             options={{
               tabBarLabel: 'Cart',
               tabBarIcon: ({focused, color, size}) => (

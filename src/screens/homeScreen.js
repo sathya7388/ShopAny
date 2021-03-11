@@ -102,7 +102,7 @@ export default class HomeScreen extends Component {
           // contentContainerStyle={{paddingBottom: 0}}
           data={this.state.data}
           renderItem={renderItem}
-          keyExtractor={item => item.vendor_id}
+          keyExtractor={item => item.id}
           numColumns={2}
         />
       </SafeAreaView>

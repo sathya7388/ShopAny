@@ -119,7 +119,7 @@ const orderStyle = StyleSheet.create ({
     borderRadius: 10,
     justifyContent: 'center',
     height: hp (3),
-    width: wp (72),
+    width: wp (75),
   },
   lineStyle: {
     marginVertical: 10,

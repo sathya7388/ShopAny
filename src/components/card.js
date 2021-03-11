@@ -14,7 +14,7 @@ export default function homeCard (props) {
   const navigation = useNavigation ();
   return (
     <TouchableWithoutFeedback
-      onPress={() => navigation.navigate ('DetailScreen')}
+      onPress={() => navigation.navigate ('DetailScreen',{productData:props.data})}
     >
       <View style={cardStyle.card}>
         <Image
@@ -23,7 +23,7 @@ export default function homeCard (props) {
         />
         <View style={cardStyle.vendorRow}>
           <Text style={{fontSize: 13, fontWeight: 'bold'}}>
-            {props.data.vendor_name}
+            {props.data.name}
           </Text>
         </View>
         <View style={cardStyle.vendorRow}>

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import homeData from '../homeData';
 
-export const contains = ({vendor_name}, query) => {
-  if (vendor_name.toLowerCase ().includes (query)) {
+export const contains = ({name}, query) => {
+  if (name.toLowerCase ().includes (query)) {
     return true;
   }
   return false;

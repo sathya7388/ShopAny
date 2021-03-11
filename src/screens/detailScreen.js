@@ -16,6 +16,7 @@ export default class DetailScreen extends Component {
   constructor (props) {
     super (props);
     this.state = {
+      productData :[this.props.route.params.productData],
       images: [
         'https://source.unsplash.com/1024x768/?nature',
         'https://source.unsplash.com/1024x768/?water',
@@ -40,14 +41,14 @@ export default class DetailScreen extends Component {
         />
         <ScrollView>
           <View style={styles.productContent}>
-            <Text>Product Name</Text>
-            <Text>Product Price</Text>
+            <Text>{this.state.productData[0].name}</Text>
+            <Text>{this.state.productData[0].price}</Text>
             <Text>Description</Text>
           </View>
         </ScrollView>
         <View style={styles.btnView}>
           <View style={styles.btn}>
-            <Button title="Buy" raised={true} onPress={() => this.props.navigation.navigate ('CheckoutScreen')}/>
+            <Button title="Buy Now" raised={true} onPress={() => this.props.navigation.navigate ('CheckoutScreen',{productData:this.state.productData})}/>
           </View>
           <View style={styles.btn}>
             <Button title="Add to Cart" raised={true} />

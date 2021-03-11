@@ -6,7 +6,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-export default function CartCard (props) {
+export default function SaveForLaterCard (props) {
   // console.log('called');
   // console.log(props.data);
   const [quantity, setQuantity] = useState (1);
@@ -82,7 +82,7 @@ export default function CartCard (props) {
         <View style={cardStyle.lineStyle} />
         <View style={cardStyle.btnorderview}>
           <TouchableOpacity style={cardStyle.btnPlaceOrderContainer}>
-            <Text style={cardStyle.txtPlaceOrder}>Save for Later</Text>
+            <Text style={cardStyle.txtPlaceOrder}>Move to Cart</Text>
           </TouchableOpacity>
           <TouchableOpacity style={cardStyle.btnPlaceOrderContainer}>
             <Text style={cardStyle.txtPlaceOrder}>Remove</Text>
