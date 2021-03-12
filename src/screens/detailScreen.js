@@ -1,22 +1,20 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import {Button} from 'react-native-elements';
+import {Snackbar} from 'react-native-paper';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 import {SliderBox} from 'react-native-image-slider-box';
-import CartCard from '../components/cartCard';
-import FilterScreen from './filterScreen';
-
 
 export default class DetailScreen extends Component {
-  
   constructor (props) {
     super (props);
     this.state = {
-      productData :[this.props.route.params.productData],
+      productData: [this.props.route.params.productData],
+      visible: false,
       images: [
         'https://source.unsplash.com/1024x768/?nature',
         'https://source.unsplash.com/1024x768/?water',
@@ -28,11 +26,6 @@ export default class DetailScreen extends Component {
 
   render () {
     return (
-      // <View>
-        // <FilterScreen />
-      // {/* </View> */}
-    
-    // <CartCard></CartCard>
       <View style={styles.container}>
         <SliderBox
           images={this.state.images}
@@ -48,12 +41,31 @@ export default class DetailScreen extends Component {
         </ScrollView>
         <View style={styles.btnView}>
           <View style={styles.btn}>
-            <Button title="Buy Now" raised={true} onPress={() => this.props.navigation.navigate ('CheckoutScreen',{productData:this.state.productData})}/>
+            <Button
+              title="Buy Now"
+              raised={true}
+              onPress={() =>
+                this.props.navigation.navigate ('CheckoutScreen', {
+                  productData: this.state.productData,
+                })}
+            />
           </View>
           <View style={styles.btn}>
-            <Button title="Add to Cart" raised={true} />
+            <Button
+              title="Add to Cart"
+              raised={true}
+              onPress={() => this.setState ({visible: true})}
+            />
           </View>
         </View>
+        <Snackbar
+          visible={this.state.visible}
+          duration={2000}
+          onDismiss={() => this.setState ({visible: false})}
+        >
+          Added to Cart
+        </Snackbar>
+
       </View>
     );
   }

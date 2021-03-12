@@ -6,16 +6,53 @@ import {
 } from 'react-native-responsive-screen';
 
 export default function OrderCard (props) {
+  var date = props.data.deliveryDate;
+  // console.log(date.getMonth());
+  // console.log(date.getDate());
+  // console.log(date.getFullYear());
+  var deliveryStatus;
+  var deliveryText;
+  if(props.data.status==1){
+    deliveryText = 'Expected Delivery';
+    deliveryStatus='Processing';
+  } else if(props.data.status==2){
+    deliveryText = 'Expected Delivery';
+    deliveryStatus='Ready For Shipment';
+  }else if(props.data.status==3){
+    deliveryText = 'Expected Delivery';
+    deliveryStatus='Shipped';
+  }else{
+    deliveryText='Delivered On';
+    deliveryStatus='Delivered';
+    }
+  var months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  var month1 = months.indexOf (date.getMonth ()-1);
+  // console.log (date.getMonth ()-1);
+  var dateValue = months[date.getMonth ()-1] + ' ' + date.getDate () + ',' + date.getFullYear ();
+  console.log (dateValue);
   return (
     <View style={orderStyle.container}>
       <View style={orderStyle.prodRow}>
         <View style={orderStyle.prodCol}>
           <Text numberOfLines={3} style={orderStyle.lblProdName}>
-            Product Name
+            {props.data.productName}
           </Text>
           <View style={orderStyle.textRowContainer}>
             <Text style={orderStyle.lblQtyName}>Quantity :</Text>
-            <Text style={orderStyle.lblQtyValue}>1</Text>
+            <Text style={orderStyle.lblQtyValue}>{props.data.quantity}</Text>
           </View>
         </View>
         <View style={orderStyle.prodCol}>
@@ -30,23 +67,27 @@ export default function OrderCard (props) {
       <View style={orderStyle.textContainer}>
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>Order Total :</Text>
-          <Text style={orderStyle.allLblValue}>$700</Text>
+          <Text style={orderStyle.allLblValue}>
+            {'$' + props.data.productPrice}
+          </Text>
         </View>
         <View style={orderStyle.soldContainer}>
-          <Text style={orderStyle.lblSellerName}>Sold and Shipped By</Text>
+          <Text style={orderStyle.lblSellerName}>
+            Sold and Shipped By  <Text style={{fontWeight:'bold'}}>{props.data.sellerCompanyName}</Text>
+          </Text>
         </View>
         <View style={orderStyle.lineStyle} />
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>Order Number :</Text>
-          <Text style={orderStyle.allLblValue}>1651321685</Text>
+          <Text style={orderStyle.allLblValue}>{props.data.id}</Text>
         </View>
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>Status</Text>
-          <Text style={orderStyle.allLblValue}>Delivered</Text>
+          <Text style={orderStyle.allLblValue}>{deliveryStatus}</Text>
         </View>
         <View style={orderStyle.textRowContainer}>
-          <Text style={orderStyle.lblQtyName}>Delivered On</Text>
-          <Text style={orderStyle.allLblValue}>Dec 7,2020</Text>
+          <Text style={orderStyle.lblQtyName}>{deliveryText}</Text>
+          <Text style={orderStyle.allLblValue}>{dateValue}</Text>
         </View>
       </View>
     </View>

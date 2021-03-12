@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -15,12 +15,47 @@ import {
 } from 'react-native-responsive-screen';
 import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {Snackbar} from 'react-native-paper';
 
 export default function CartScreen () {
   const navigation = useNavigation ();
+  const [visible, setVisible] = useState (false);
+  const [snackMessage, setMessage] = useState ('');
+  const [ftotalPrice,setTotalPrice] = useState(0);
+  const [fdeliveryFee,setDeliveryFee] = useState(0);
+  const [fDiscount,setDiscount] = useState(0);
+  const [fproductPrice,setproductPrice] = useState(0);
   let cartData = Data.cart;
-  // console.log (cartData);
   let totalprice = 0, productPrice = 0, deliveryFee = 0, discount = 0;
+  
+  function clickAlert () {
+    console.log ('called');
+    alert ('I am working');
+  }
+  function saveLater () {
+    setVisible (true);
+    setMessage ('Saved For Later');
+  }
+  function removeCart () {
+    setVisible (true);
+    setMessage ('Removed From Cart');
+  }
+  function decreaseStepper(data){
+    deliveryFee = deliveryFee + parseInt (data.deliveryFee);
+    discount = discount + parseInt (data.discount);
+    productPrice = productPrice-parseInt (data.price);
+    // totalprice = totalprice-data.price;
+    console.log(data);
+    console.log(productPrice);
+  }
+  function increase(data){
+    deliveryFee = deliveryFee + parseInt (data.deliveryFee);
+    discount = discount + parseInt (data.discount);
+    productPrice = productPrice+parseInt (data.price);
+    // totalprice = totalprice+data.price;
+    console.log(data);
+    console.log(productPrice);
+  }
   for (var i = 0; i < cartData.length; i++) {
     productPrice = productPrice + parseInt (cartData[i].price);
     deliveryFee = deliveryFee + parseInt (cartData[i].deliveryFee);
@@ -30,9 +65,23 @@ export default function CartScreen () {
     totalprice = productPrice - discount;
     deliveryFee = 'Free';
   } else {
-    totalprice = productPrice + deliveryFee - discount;
+    totalprice = (productPrice + deliveryFee) - discount;
   }
-  const renderItem = ({item}) => <CartCard data={item} />;
+
+  // setTotalPrice(totalprice);
+  // setDeliveryFee(deliveryFee);
+  // setDiscount(discount);
+  // setproductPrice(productPrice);
+  
+  const renderItem = ({item}) => (
+    <CartCard
+      data={item}
+      onRemoveCart={removeCart}
+      onSaveLater={saveLater}
+      onStepperDown={decreaseStepper}
+      onStepperUp={increase}
+    />
+  );
   return (
     <SafeAreaView>
       <FlatList
@@ -84,7 +133,10 @@ export default function CartScreen () {
             <View style={cart.btnorderview}>
               <TouchableOpacity
                 style={cart.btnPlaceOrderContainer}
-                onPress={() => navigation.navigate ('CheckoutScreen',{productData:cartData})}
+                onPress={() =>
+                  navigation.navigate ('CheckoutScreen', {
+                    productData: cartData,
+                  })}
               >
                 <Text style={cart.txtPlaceOrder}>Continue to Checkout</Text>
               </TouchableOpacity>
@@ -93,6 +145,13 @@ export default function CartScreen () {
           </View>
         }
       />
+      <Snackbar
+              visible={visible}
+              duration={2000}
+              onDismiss={() => setVisible (false)}
+            >
+              {snackMessage}
+            </Snackbar>
     </SafeAreaView>
   );
 }
@@ -109,7 +168,7 @@ const cart = StyleSheet.create ({
     paddingVertical: 10,
     paddingBottom: 0,
     paddingHorizontal: 10,
-    marginTop:0,
+    marginTop: 0,
   },
   priceDetailRow: {
     flexDirection: 'row',

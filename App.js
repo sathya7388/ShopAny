@@ -46,7 +46,8 @@ function HomeStack () {
         name="Home"
         component={HomeScreen}
         options={{
-          title: 'Home Page',
+          headerShown: false,
+          // title: 'Home Page',
           // headerTitle: props => <Header {...props} />,
         }}
       />

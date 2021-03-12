@@ -1,19 +1,22 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {Snackbar} from 'react-native-paper';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-export default function CartCard (props) {
+export default function CartCard ({data, onStepperDown,onRemoveCart,onSaveLater,onStepperUp}) {
   // console.log('called');
   // console.log(props.data);
+  const [visible, setVisible] = useState (false);
+  const [snackMessage, setMessage] = useState ('');
   const [quantity, setQuantity] = useState (1);
-  const [prodPrice, setPrice] = useState (parseInt(props.data.price));
+  const [prodPrice, setPrice] = useState (parseInt (data.price));
   const [minusdisabled, setMinusDisabled] = useState (true);
   const [plusdisabled, setPlusDisabled] = useState (false);
-  const productPrice = parseInt(props.data.price);
+  const productPrice = parseInt (data.price);
   // setPrice(productPrice);
   useEffect (
     () => {
@@ -28,6 +31,7 @@ export default function CartCard (props) {
       setPlusDisabled (false);
       setMinusDisabled (false);
       setQuantity (quantity - 1);
+      onStepperDown(data);
     }
   };
   const incrementStepper = function () {
@@ -37,6 +41,7 @@ export default function CartCard (props) {
       setMinusDisabled (false);
       setPlusDisabled (false);
       setQuantity (quantity + 1);
+      onStepperUp(data);
     }
   };
   return (
@@ -44,7 +49,7 @@ export default function CartCard (props) {
       <View style={cardStyle.cartContainer}>
         <View style={cardStyle.cartCard}>
           <View style={cardStyle.cartContent}>
-            <Text style={cardStyle.prodName}>{props.data.name}</Text>
+            <Text style={cardStyle.prodName}>{data.name}</Text>
             <Text style={cardStyle.sellerName}>Seller : ABC sellers</Text>
             <Text style={cardStyle.prodPrice}>{'$' + prodPrice}</Text>
             <Text style={cardStyle.sellerName}>Delivery in 2 days</Text>
@@ -81,14 +86,31 @@ export default function CartCard (props) {
         </View>
         <View style={cardStyle.lineStyle} />
         <View style={cardStyle.btnorderview}>
-          <TouchableOpacity style={cardStyle.btnPlaceOrderContainer}>
+          <TouchableOpacity
+            style={cardStyle.btnPlaceOrderContainer}
+            onPress={() => {
+              onSaveLater()
+            }}
+          >
             <Text style={cardStyle.txtPlaceOrder}>Save for Later</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={cardStyle.btnPlaceOrderContainer}>
+          <TouchableOpacity
+            style={cardStyle.btnPlaceOrderContainer}
+            onPress={() => {
+              onRemoveCart()
+            }}
+          >
             <Text style={cardStyle.txtPlaceOrder}>Remove</Text>
           </TouchableOpacity>
         </View>
       </View>
+      <Snackbar
+        visible={visible}
+        duration={2000}
+        onDismiss={() => setVisible (false)}
+      >
+        {snackMessage}
+      </Snackbar>
     </View>
   );
 }
@@ -157,7 +179,7 @@ const cardStyle = StyleSheet.create ({
   lineStyle: {
     backgroundColor: '#E0E0E0',
     height: 1,
-    marginHorizontal:10,
+    marginHorizontal: 10,
   },
   btnorderview: {
     flexDirection: 'row',
