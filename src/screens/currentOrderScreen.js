@@ -12,7 +12,6 @@ export default function CurrentOrderScreen () {
       orderData.push(Data.orderData[i]);
     }
   }
-  // console.log(orderData);
   const renderItem = ({item}) => <OrderCard data={item} />;
   return (
     <View style={{alignItems: 'center'}}>

@@ -1,29 +1,37 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {Snackbar} from 'react-native-paper';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import * as Data from '../data';
 
-export default function CartCard ({data, onStepperDown,onRemoveCart,onSaveLater,onStepperUp}) {
-  // console.log('called');
-  // console.log(props.data);
-  const [visible, setVisible] = useState (false);
-  const [snackMessage, setMessage] = useState ('');
-  const [quantity, setQuantity] = useState (1);
-  const [prodPrice, setPrice] = useState (parseInt (data.price));
+export default function CartCard({
+  data,
+  onStepperDown,
+  onRemoveCart,
+  onSaveLater,
+  onStepperUp,
+}) {
+  const [quantity, setQuantity] = useState (data.quantity);
+  const [prodPrice, setPrice] = useState (parseFloat (data.product.price));
   const [minusdisabled, setMinusDisabled] = useState (true);
   const [plusdisabled, setPlusDisabled] = useState (false);
-  const productPrice = parseInt (data.price);
-  // setPrice(productPrice);
+  const productPrice = parseFloat (data.product.price);
+
   useEffect (
     () => {
       setPrice (productPrice * quantity);
+      if (quantity > 1) {
+        setMinusDisabled (false);
+      } else {
+        setMinusDisabled (true);
+      }
     },
     [quantity]
   );
+
   const decrementStepper = function () {
     if (quantity == 1) {
       setMinusDisabled (true);
@@ -31,7 +39,7 @@ export default function CartCard ({data, onStepperDown,onRemoveCart,onSaveLater,
       setPlusDisabled (false);
       setMinusDisabled (false);
       setQuantity (quantity - 1);
-      onStepperDown(data);
+      onStepperDown (data);
     }
   };
   const incrementStepper = function () {
@@ -41,7 +49,7 @@ export default function CartCard ({data, onStepperDown,onRemoveCart,onSaveLater,
       setMinusDisabled (false);
       setPlusDisabled (false);
       setQuantity (quantity + 1);
-      onStepperUp(data);
+      onStepperUp (data);
     }
   };
   return (
@@ -49,15 +57,26 @@ export default function CartCard ({data, onStepperDown,onRemoveCart,onSaveLater,
       <View style={cardStyle.cartContainer}>
         <View style={cardStyle.cartCard}>
           <View style={cardStyle.cartContent}>
-            <Text style={cardStyle.prodName}>{data.name}</Text>
-            <Text style={cardStyle.sellerName}>Seller : ABC sellers</Text>
-            <Text style={cardStyle.prodPrice}>{'$' + prodPrice}</Text>
-            <Text style={cardStyle.sellerName}>Delivery in 2 days</Text>
+            <Text style={cardStyle.prodName}>{data.product.name}</Text>
+            <Text style={cardStyle.sellerName}>
+              Seller :
+              {Data.sellerName.map ((seller, index) => {
+                if (seller.id == data.product.sellerId) {
+                  return <Text>{' ' + seller.name}</Text>;
+                }
+              })}
+            </Text>
+            <Text style={cardStyle.prodPrice}>
+              {'$' + prodPrice.toFixed (2)}
+            </Text>
+            <Text style={cardStyle.sellerName}>
+              {'Delivery in ' + data.product.expectedDeliveryDate + ' days'}
+            </Text>
           </View>
           <View style={cardStyle.cartAdjust}>
             <View style={cardStyle.cartImageView}>
               <Image
-                source={require ('../assets/images/one.jpg')}
+                source={{uri: data.product.images[0]}}
                 style={cardStyle.cartImage}
               />
             </View>
@@ -89,7 +108,7 @@ export default function CartCard ({data, onStepperDown,onRemoveCart,onSaveLater,
           <TouchableOpacity
             style={cardStyle.btnPlaceOrderContainer}
             onPress={() => {
-              onSaveLater()
+              onSaveLater (data);
             }}
           >
             <Text style={cardStyle.txtPlaceOrder}>Save for Later</Text>
@@ -97,20 +116,14 @@ export default function CartCard ({data, onStepperDown,onRemoveCart,onSaveLater,
           <TouchableOpacity
             style={cardStyle.btnPlaceOrderContainer}
             onPress={() => {
-              onRemoveCart()
+              onRemoveCart (data);
             }}
           >
             <Text style={cardStyle.txtPlaceOrder}>Remove</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <Snackbar
-        visible={visible}
-        duration={2000}
-        onDismiss={() => setVisible (false)}
-      >
-        {snackMessage}
-      </Snackbar>
+
     </View>
   );
 }

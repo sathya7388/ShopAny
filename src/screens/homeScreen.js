@@ -10,9 +10,7 @@ import {
   Image,
 } from 'react-native';
 import {Avatar} from 'react-native-elements';
-// import {Searchbar,Avatar} from 'react-native-paper';
 import Card from '../components/card';
-import {getVendor, contains} from '../utilities/ApiService';
 
 import {
   widthPercentageToDP as wp,
@@ -22,57 +20,86 @@ import {
 import _ from 'lodash';
 
 export default class HomeScreen extends Component {
+  _isMounted = false;
+
   constructor (props) {
     super (props);
 
     this.state = {
-      location: null,
-      loading: false,
-      data: [],
       error: null,
+      loading: false,
       query: '',
-      fullData: [],
+      data: [],
+      backup: [],
     };
   }
-
   componentDidMount () {
     this.makeRemoteRequest ();
   }
+  componentWillUnmount () {
+    this._isMounted = false;
+  }
+  // this.props.navigation.state.params.filterOperation(){
 
+  // }
+  filterOperation () {
+    console.log ('filter called');
+  }
+  filterData = (value, fromPrice, toProce, category) => {
+    console.log ('filter called');
+  };
   makeRemoteRequest = () => {
-    this.setState ({loading: true});
-    getVendor (20, this.state.query)
-      .then (vendors => {
-        this.setState ({
-          loading: false,
-          data: vendors,
-          fullData: vendors,
-        });
+    this._isMounted = true;
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify ({
+        fromPrice: 0,
+        toPrice: 3000,
+        category: '',
+      }),
+    };
+
+    fetch ('https://shopany-api.herokuapp.com/api/products', requestOptions)
+      .then (response => {
+        return response.json ();
       })
-      .catch (error => {
-        this.setState ({error, loading: false});
+      .then (responseData => {
+        return responseData;
+      })
+      .then (data => {
+        if (this._isMounted) {
+          this.setState ({data: data.products});
+          this.setState ({backup: data.products});
+        }
+      })
+      .catch (err => {
+        console.log ('fetch error' + err);
       });
   };
 
   searchHandler = text => {
     const formattedQuery = text.toLowerCase ();
-    const searchData = _.filter (this.state.fullData, user => {
-      return contains (user, formattedQuery);
+    const filterData = this.state.backup;
+    let filterResult = filterData.filter (item => {
+      console.log (item);
+      if (item.name.toLowerCase ().match (formattedQuery)) {
+        return item;
+      }
     });
-    this.setState ({query: formattedQuery, data: searchData}, () =>
-      this.makeRemoteRequest ()
-    );
+    this.setState ({data: filterResult});
   };
   render () {
     const renderItem = ({item}) => <Card data={item} />;
     return (
       <SafeAreaView>
-
         <FlatList
-          // contentContainerStyle={{flexDirection:'row'}}
           data={this.state.data}
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item._id}
           numColumns={2}
           ListHeaderComponent={this.searchHeader}
         />
@@ -83,7 +110,6 @@ export default class HomeScreen extends Component {
   searchHeader = () => {
     return (
       <View style={styles.headerContainer}>
-
         <Text style={styles.appName}>ShopAny</Text>
         <TextInput
           style={styles.searchBar}
@@ -99,19 +125,13 @@ export default class HomeScreen extends Component {
             style={styles.icon}
           />
         </TouchableOpacity>
-        {/* <TouchableOpacity
+        <Avatar
+          size="small"
+          rounded
+          title="MT"
+          containerStyle={{backgroundColor: 'gray'}}
           onPress={() => this.props.navigation.navigate ('ProfileScreen')}
-        > */}
-          <Avatar
-            size="small"
-            rounded
-            title="MT"
-            containerStyle={{backgroundColor: 'gray'}}
-            onPress={() => this.props.navigation.navigate ('ProfileScreen')}
-            // activeOpacity={1.0}
-          />
-        {/* </TouchableOpacity> */}
-
+        />
       </View>
     );
   };
@@ -132,8 +152,6 @@ const styles = StyleSheet.create ({
   },
   searchBar: {
     marginHorizontal: 10,
-    // marginLeft:10,
-    // marginRight:5,
     borderColor: 'gray',
     borderWidth: 0.5,
     width: wp (57),
@@ -141,53 +159,9 @@ const styles = StyleSheet.create ({
     borderRadius: 8,
   },
   icon: {
-    height: hp(2.5),
-    width: wp(6),
+    height: hp (2.5),
+    width: wp (6),
     justifyContent: 'flex-end',
-    marginRight:5,
-    // marginHorizontal: 5,
+    marginRight: 5,
   },
-  // headerCol: {
-  //   justifyContent: 'center',
-  //   marginLeft: 10,
-  // },
-  // headerRow: {
-  //   flexDirection: 'row',
-  // },
-  //
-  // header: {
-  //   height: 40,
-  //   elevation: 8,
-  //   // paddingHorizontal: 16,
-  // },
-  // header_inner: {
-  //   flex: 1,
-  //   height: 50,
-  //   overflow: 'hidden',
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   position: 'relative',
-  // },
-  // appName: {
-  //   marginLeft: 10,
-  //   fontSize: 18,
-  //   fontWeight: 'bold',
-  //   color: '#008075',
-  // },
-  // searchText: {
-  //   height: 35,
-  //   borderColor: 'gray',
-  //   borderWidth: 0.5,
-  //   marginVertical: 15,
-  //   marginHorizontal: 20,
-  //   marginRight: 10,
-  //   borderRadius: 8,
-  //   width: 250,
-  // },
-  // icon: {
-  //   height: 20,
-  //   width: 20,
-  //   justifyContent: 'flex-end',
-  //   marginHorizontal: 5,
-  // },
 });

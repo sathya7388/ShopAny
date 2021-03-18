@@ -14,11 +14,12 @@ export default function homeCard (props) {
   const navigation = useNavigation ();
   return (
     <TouchableWithoutFeedback
-      onPress={() => navigation.navigate ('DetailScreen',{productData:props.data})}
+      onPress={() =>
+        navigation.navigate ('DetailScreen', {productData: props.data})}
     >
       <View style={cardStyle.card}>
         <Image
-          source={{uri: props.data.vendor_banner_image}}
+          source={{uri: props.data.images[0]}}
           style={cardStyle.image}
         />
         <View style={cardStyle.vendorRow}>
@@ -27,12 +28,12 @@ export default function homeCard (props) {
           </Text>
         </View>
         <View style={cardStyle.vendorRow}>
-          <Text style={{fontSize: 10}}>$$ </Text>
-          <Text style={{fontSize: 10}}>. {props.data.vendor_category}</Text>
+          <Text style={{fontSize: 10}}>{'$' + props.data.price}</Text>
+          <Text style={{fontSize: 10}}>{' . ' + props.data.category}</Text>
         </View>
         <View style={cardStyle.ratingStyle}>
           <Text style={cardStyle.ratingValueStyle}>
-            {props.data.vendor_rating}
+            {(props.data.rating).toFixed(1)}
           </Text>
         </View>
       </View>
@@ -51,7 +52,6 @@ const cardStyle = StyleSheet.create ({
     shadowRadius: 20,
     paddingHorizontal: 0,
     paddingVertical: 0,
-    // marginHorizontal: 15,
     marginRight: 15,
     marginLeft: 15,
     marginVertical: 10,

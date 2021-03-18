@@ -4,53 +4,77 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  
   FlatList,
+  Modal,
+  Pressable,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {useNavigation} from '@react-navigation/native';
 import CheckoutCard from '../components/checkoutCard';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
 
 export default function CheckoutScreen (props) {
   const navigation = useNavigation ();
   let productdata = [];
-  // console.log (props);
-  // if(props.route.params.name == 'CheckoutScreen'){
   productdata = props.route.params.productData;
-  // }else{
-  // productdata.push (props.route.params.productData);
-  // }
+  
   let totalprice = 0, productPrice = 0, deliveryFee = 0, discount = 0;
-  // const [productdata, setProductData] = useState ([]);
-  // setProductData(props.route.params.productData);
-  // const productdata = props.route.params.productData;
-  // const decrementStepper = function () {
+
   for (var i = 0; i < productdata.length; i++) {
-    productPrice = productPrice + parseInt (productdata[i].price);
-    deliveryFee = deliveryFee + parseInt (productdata[i].deliveryFee);
-    discount = discount + parseInt (productdata[i].discount);
+    productPrice +=
+      parseFloat (productdata[i].price) * parseFloat (productdata[i].prodQuantity);
+    deliveryFee +=
+      parseFloat (productdata[i].deliveryFee) *
+      parseFloat (productdata[i].prodQuantity);
+    discount +=
+      parseFloat (productdata[i].discount) *
+      parseFloat (productdata[i].prodQuantity);
   }
   if (deliveryFee == 0) {
     totalprice = productPrice - discount;
     deliveryFee = 'Free';
   } else {
     totalprice = productPrice + deliveryFee - discount;
+    deliveryFee = '$' + deliveryFee;
   }
-  // }
   const renderItem = ({item}) => <CheckoutCard data={item} />;
+  const [modalVisible, setModalVisible] = useState (false);
   return (
     <SafeAreaView>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible (!modalVisible);
+        }}
+      >
+        <View style={checkoutStyle.centeredView}>
+          <View style={checkoutStyle.modalView}>
+            <Text style={checkoutStyle.modalText}>
+              Your Order has been placed
+            </Text>
+            <Pressable
+              style={[checkoutStyle.button, checkoutStyle.buttonClose]}
+              onPress={() => {
+                setModalVisible (!modalVisible);
+                navigation.navigate ('HomeScreen');
+              }}
+            >
+              <Text style={checkoutStyle.textStyle}>Continue Shopping</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
       <FlatList
         data={productdata}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item._id}
         ListHeaderComponent={
           <View>
-
             <Text
               style={{
                 fontWeight: 'bold',
@@ -94,7 +118,9 @@ export default function CheckoutScreen (props) {
               />
               <View style={checkoutStyle.priceDetailRow}>
                 <Text style={checkoutStyle.priceBDText}>Price</Text>
-                <Text style={checkoutStyle.priceBDValue}>{productPrice}</Text>
+                <Text style={checkoutStyle.priceBDValue}>
+                  {'$' + productPrice}
+                </Text>
               </View>
               <View style={checkoutStyle.priceDetailRow}>
                 <Text style={checkoutStyle.priceBDText}>Discount</Text>
@@ -106,7 +132,9 @@ export default function CheckoutScreen (props) {
                 <Text style={checkoutStyle.priceBDText}>
                   Delivery Charges
                 </Text>
-                <Text style={checkoutStyle.priceBDValue}>{deliveryFee}</Text>
+                <Text style={checkoutStyle.priceBDValue}>
+                  {deliveryFee}
+                </Text>
               </View>
               <View
                 style={{
@@ -117,7 +145,7 @@ export default function CheckoutScreen (props) {
               />
               <View style={checkoutStyle.priceDetailRow}>
                 <Text>Total Amount</Text>
-                <Text style={checkoutStyle.priceBDValue}>{totalprice}</Text>
+                <Text style={checkoutStyle.totalPrice}>{'$' + totalprice}</Text>
               </View>
 
             </View>
@@ -128,7 +156,10 @@ export default function CheckoutScreen (props) {
               }}
             />
             <View style={checkoutStyle.btnorderview}>
-              <TouchableOpacity style={checkoutStyle.btnPlaceOrderContainer}>
+              <TouchableOpacity
+                style={checkoutStyle.btnPlaceOrderContainer}
+                onPress={() => setModalVisible (!modalVisible)}
+              >
                 <Text style={checkoutStyle.txtPlaceOrder}>
                   Place Order
                 </Text>
@@ -173,10 +204,14 @@ const checkoutStyle = StyleSheet.create ({
     fontSize: 12,
     color: '#808080',
   },
+  totalPrice: {
+    flexDirection: 'column',
+    right: 50,
+    position: 'absolute',
+  },
   priceBDValue: {
     fontSize: 12,
     color: '#808080',
-    // paddingVertical: 10,
     flexDirection: 'column',
     right: 50,
     position: 'absolute',
@@ -199,5 +234,43 @@ const checkoutStyle = StyleSheet.create ({
     fontSize: 14,
     color: '#fff',
     alignSelf: 'center',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });

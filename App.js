@@ -24,12 +24,11 @@ import SaveForLaterScreen from './src/screens/saveForLaterScreen';
 import FavoriteScreen from './src/screens/FavoriteScreen';
 import CheckoutScreen from './src/screens/checkoutScreen';
 
-import Header from './src/components/header';
+
 
 const Stack = createStackNavigator ();
 const Tab = createBottomTabNavigator ();
 const TopTab = createMaterialTopTabNavigator ();
-// const CartTopTab = createMaterialTopTabNavigator ();
 
 function HomeStack () {
   return (
@@ -43,7 +42,7 @@ function HomeStack () {
       }}
     >
       <Stack.Screen
-        name="Home"
+        name="HomeScreen"
         component={HomeScreen}
         options={{
           headerShown: false,
@@ -146,7 +145,6 @@ class App extends React.Component {
     return (
       <NavigationContainer>
         <Tab.Navigator
-          // initialRouteName="Feed"
           tabBarOptions={{
             activeTintColor: '#42f44b',
           }}

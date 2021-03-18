@@ -7,24 +7,21 @@ import {
 
 export default function OrderCard (props) {
   var date = props.data.deliveryDate;
-  // console.log(date.getMonth());
-  // console.log(date.getDate());
-  // console.log(date.getFullYear());
   var deliveryStatus;
   var deliveryText;
-  if(props.data.status==1){
+  if (props.data.status == 1) {
     deliveryText = 'Expected Delivery';
-    deliveryStatus='Processing';
-  } else if(props.data.status==2){
+    deliveryStatus = 'Processing';
+  } else if (props.data.status == 2) {
     deliveryText = 'Expected Delivery';
-    deliveryStatus='Ready For Shipment';
-  }else if(props.data.status==3){
+    deliveryStatus = 'Ready For Shipment';
+  } else if (props.data.status == 3) {
     deliveryText = 'Expected Delivery';
-    deliveryStatus='Shipped';
-  }else{
-    deliveryText='Delivered On';
-    deliveryStatus='Delivered';
-    }
+    deliveryStatus = 'Shipped';
+  } else {
+    deliveryText = 'Delivered On';
+    deliveryStatus = 'Delivered';
+  }
   var months = [
     'Jan',
     'Feb',
@@ -39,9 +36,13 @@ export default function OrderCard (props) {
     'Nov',
     'Dec',
   ];
-  var month1 = months.indexOf (date.getMonth ()-1);
-  // console.log (date.getMonth ()-1);
-  var dateValue = months[date.getMonth ()-1] + ' ' + date.getDate () + ',' + date.getFullYear ();
+  var month1 = months.indexOf (date.getMonth () - 1);
+  var dateValue =
+    months[date.getMonth () - 1] +
+    ' ' +
+    date.getDate () +
+    ',' +
+    date.getFullYear ();
   console.log (dateValue);
   return (
     <View style={orderStyle.container}>
@@ -73,7 +74,11 @@ export default function OrderCard (props) {
         </View>
         <View style={orderStyle.soldContainer}>
           <Text style={orderStyle.lblSellerName}>
-            Sold and Shipped By  <Text style={{fontWeight:'bold'}}>{props.data.sellerCompanyName}</Text>
+            Sold and Shipped By
+            {' '}
+            <Text style={{fontWeight: 'bold'}}>
+              {props.data.sellerCompanyName}
+            </Text>
           </Text>
         </View>
         <View style={orderStyle.lineStyle} />
