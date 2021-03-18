@@ -6,7 +6,7 @@ import {
 } from 'react-native-responsive-screen';
 
 export default function OrderCard (props) {
-  var date = props.data.deliveryDate;
+  var deliveryDate = new Date(props.data.deliveryDate);
   var deliveryStatus;
   var deliveryText;
   if (props.data.status == 1) {
@@ -36,20 +36,19 @@ export default function OrderCard (props) {
     'Nov',
     'Dec',
   ];
-  var month1 = months.indexOf (date.getMonth () - 1);
   var dateValue =
-    months[date.getMonth () - 1] +
+    months[deliveryDate.getMonth ()] +
     ' ' +
-    date.getDate () +
+    deliveryDate.getDate () +
     ',' +
-    date.getFullYear ();
-  console.log (dateValue);
+    deliveryDate.getFullYear ();
+  // console.log (dateValue);
   return (
     <View style={orderStyle.container}>
       <View style={orderStyle.prodRow}>
         <View style={orderStyle.prodCol}>
           <Text numberOfLines={3} style={orderStyle.lblProdName}>
-            {props.data.productName}
+            {props.data.product.name}
           </Text>
           <View style={orderStyle.textRowContainer}>
             <Text style={orderStyle.lblQtyName}>Quantity :</Text>
@@ -59,7 +58,7 @@ export default function OrderCard (props) {
         <View style={orderStyle.prodCol}>
           <View style={orderStyle.imageContainer}>
             <Image
-              source={require ('../assets/images/one.jpg')}
+              source={{uri: props.data.product.images[0]}}
               style={orderStyle.orderImage}
             />
           </View>
@@ -69,7 +68,7 @@ export default function OrderCard (props) {
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>Order Total :</Text>
           <Text style={orderStyle.allLblValue}>
-            {'$' + props.data.productPrice}
+            {'$' + (props.data.product.price*props.data.quantity)}
           </Text>
         </View>
         <View style={orderStyle.soldContainer}>
@@ -77,14 +76,14 @@ export default function OrderCard (props) {
             Sold and Shipped By
             {' '}
             <Text style={{fontWeight: 'bold'}}>
-              {props.data.sellerCompanyName}
+              ABC
             </Text>
           </Text>
         </View>
         <View style={orderStyle.lineStyle} />
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>Order Number :</Text>
-          <Text style={orderStyle.allLblValue}>{props.data.id}</Text>
+          <Text style={orderStyle.allLblValue}>{props.data._id}</Text>
         </View>
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>Status</Text>

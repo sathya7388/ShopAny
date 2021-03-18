@@ -9,45 +9,52 @@ import {
 } from 'react-native-responsive-screen';
 import {useNavigation} from '@react-navigation/native';
 
-export default function CartScreen () {
+export default function CartScreen (props) {
   const navigation = useNavigation ();
   const [cartData, setCartData] = useState ([]);
   const [visible, setVisible] = useState (false);
   const [snackMessage, setMessage] = useState ('');
 
-  useEffect (() => {
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    };
+  useEffect (
+    () => {
+      const unsubscribe = props.navigation.addListener ('focus', () => {
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        };
 
-    fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/getCart',
-      requestOptions
-    )
-      .then (response => {
-        return response.json ();
-      })
-      .then (responseData => {
-        let tempArray = [];
-        for (var i = 0; i < responseData.user[0].cart.length; i++) {
-          if (responseData.user[0].cart[i].cartType == 1) {
-            tempArray.push (responseData.user[0].cart[i]);
-          }
-        }
-
-        setCartData (tempArray);
-      })
-      .catch (error => console.error (error))
-      .finally (() => {
-        // setLoading (false)
+        fetch (
+          'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/getCart',
+          requestOptions
+        )
+          .then (response => {
+            return response.json ();
+          })
+          .then (responseData => {
+            let tempArray = [];
+            for (var i = 0; i < responseData.user[0].cart.length; i++) {
+              if (responseData.user[0].cart[i].cartType == 1) {
+                tempArray.push (responseData.user[0].cart[i]);
+              }
+            }
+            console.log('api call success');
+            setCartData (tempArray);
+          })
+          .catch (error => {
+            // console.error (error)
+          })
+          .finally (() => {
+            // setLoading (false)
+          });
       });
-  }, []);
+      return unsubscribe;
+    },
+    [props.navigation]
+  );
   function moveCart (data) {
-    console.log (data);
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -71,7 +78,6 @@ export default function CartScreen () {
       .then (responseData => {
         if ((responseData.status = 'sucess')) {
           let tempArray = cartData;
-          console.log (tempArray);
           for (var i = 0; i < tempArray.length; i++) {
             if (tempArray[i].product._id == data.product._id) {
               tempArray.splice (i, 1);
@@ -96,7 +102,6 @@ export default function CartScreen () {
       },
     };
     let rmCartId = data.product._id;
-    console.log (rmCartId);
     fetch (
       'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/removeCart/' +
         rmCartId,
@@ -108,7 +113,6 @@ export default function CartScreen () {
       .then (responseData => {
         if (responseData.status == 'success') {
           let tempArray = cartData;
-          console.log (tempArray);
           for (var i = 0; i < tempArray.length; i++) {
             if (tempArray[i].product._id == rmCartId) {
               tempArray.splice (i, 1);
@@ -128,7 +132,7 @@ export default function CartScreen () {
     <LaterCard data={item} onRemoveCart={removeCart} onMoveCart={moveCart} />
   );
   if (cartData.length > 0) {
-    console.log (cartData);
+    console.log('render call more 0');
     return (
       <View style={{flex: 1}}>
         <SafeAreaView>
@@ -148,6 +152,7 @@ export default function CartScreen () {
       </View>
     );
   } else {
+    console.log('render call no data');
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>

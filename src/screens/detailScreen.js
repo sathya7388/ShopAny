@@ -47,7 +47,7 @@ export default class DetailScreen extends Component {
   checkOutCall = () => {
     var productObj = this.state.productData[0];
     productObj.prodQuantity = parseInt (this.state.quantityData);
-    console.log (productObj);
+    // console.log (productObj);
     var prodData = [productObj];
     this.props.navigation.navigate ('CheckoutScreen', {productData: prodData});
   };

@@ -43,10 +43,10 @@ export default class HomeScreen extends Component {
 
   // }
   filterOperation () {
-    console.log ('filter called');
+    // console.log ('filter called');
   }
   filterData = (value, fromPrice, toProce, category) => {
-    console.log ('filter called');
+    // console.log ('filter called');
   };
   makeRemoteRequest = () => {
     this._isMounted = true;
@@ -85,7 +85,7 @@ export default class HomeScreen extends Component {
     const formattedQuery = text.toLowerCase ();
     const filterData = this.state.backup;
     let filterResult = filterData.filter (item => {
-      console.log (item);
+      // console.log (item);
       if (item.name.toLowerCase ().match (formattedQuery)) {
         return item;
       }

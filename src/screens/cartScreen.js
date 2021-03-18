@@ -17,7 +17,7 @@ import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Snackbar} from 'react-native-paper';
 
-export default function CartScreen () {
+export default function CartScreen (props) {
   const navigation = useNavigation ();
   const [isLoading, setLoading] = useState (true);
   const [visible, setVisible] = useState (false);
@@ -30,10 +30,8 @@ export default function CartScreen () {
     deFee: 0,
     tot: 0,
   });
-  // let cartData = Data.cart;
 
   function saveLater (data) {
-    console.log(data)
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -82,7 +80,6 @@ export default function CartScreen () {
       },
     };
     let rmCartId = data.product._id;
-    console.log (rmCartId);
     fetch (
       'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/removeCart/' +
         rmCartId,
@@ -94,7 +91,6 @@ export default function CartScreen () {
       .then (responseData => {
         if (responseData.status == 'success') {
           let tempArray = cartData;
-          console.log (tempArray);
           for (var i = 0; i < tempArray.length; i++) {
             if (tempArray[i].product._id == rmCartId) {
               tempArray.splice (i, 1);
@@ -109,35 +105,43 @@ export default function CartScreen () {
       .catch (error => console.error (error))
       .finally (() => setLoading (false));
   }
+  
+  useEffect (
+    () => {
+      const unsubscribe = props.navigation.addListener ('focus', () => {
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        };
 
-  useEffect (() => {
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    };
-
-    fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/getCart',
-      requestOptions
-    )
-      .then (response => {
-        return response.json ();
-      })
-      .then (responseData => {
-        let tempArray = [];
-        for (var i = 0; i < responseData.user[0].cart.length; i++) {
-          if (responseData.user[0].cart[i].cartType == 0) {
-            tempArray.push (responseData.user[0].cart[i]);
-          }
-        }
-        setCartData (tempArray);
-      })
-      .catch (error => console.error (error))
-      .finally (() => setLoading (false));
-  }, []);
+        fetch (
+          'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/getCart',
+          requestOptions
+        )
+          .then (response => {
+            return response.json ();
+          })
+          .then (responseData => {
+            let tempArray = [];
+            for (var i = 0; i < responseData.user[0].cart.length; i++) {
+              if (responseData.user[0].cart[i].cartType == 0) {
+                tempArray.push (responseData.user[0].cart[i]);
+              }
+            }
+            setCartData (tempArray);
+          })
+          .catch (error => {
+            // console.error (error)
+          })
+          .finally (() => setLoading (false));
+      });
+      return unsubscribe;
+    },
+    [props.navigation]
+  );
 
   useEffect (
     () => {
