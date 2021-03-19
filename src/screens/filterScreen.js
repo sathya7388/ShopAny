@@ -11,7 +11,7 @@ export default class FilterScreen extends Component {
   constructor (props) {
     super (props);
     this.state = {
-      value: 'first',
+      value: 'noPreference',
       fromPrice: '',
       toPrice: '',
       categoryData: '0',
@@ -43,10 +43,18 @@ export default class FilterScreen extends Component {
       ],
     };
   }
+  componentDidMount () {
+    this.setState({
+      value: this.props.route.params.filter.sortBy,
+      fromPrice: this.props.route.params.filter.fromPrice,
+      toPrice: this.props.route.params.filter.toPrice,
+      categoryData: this.props.route.params.filter.category,
+    });
+  }
 
   resetData = () => {
     this.setState({
-      value: 'first',
+      value: 'noPreference',
       fromPrice: '',
       toPrice: '',
       categoryData: '0',
@@ -106,11 +114,11 @@ export default class FilterScreen extends Component {
               value={this.state.value}
             >
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <RadioButton value="first" />
+                <RadioButton value="low" />
                 <Text>Price : Low to High</Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <RadioButton value="second" />
+                <RadioButton value="high" />
                 <Text>Price : High to Low</Text>
               </View>
             </RadioButton.Group>
@@ -126,7 +134,7 @@ export default class FilterScreen extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             style={filterStyle.btnPlaceOrderContainer}
-            onPress={() => this.props.navigation.navigate ('HomeScreen')}
+            onPress={() => this.props.navigation.navigate ('HomeScreen', {filter: {'category': this.state.categoryData, 'fromPrice':this.state.fromPrice, 'toPrice': this.state.toPrice, 'sortBy': this.state.value}})}
           >
             <Text style={filterStyle.txtPlaceOrder}>Apply</Text>
           </TouchableOpacity>

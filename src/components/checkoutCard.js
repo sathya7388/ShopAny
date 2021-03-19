@@ -1,6 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -23,7 +22,7 @@ export default function CheckOutCard (props) {
           </View>
           <View style={cardStyle.cartImageView}>
             <Image
-              source={{uri: props.data.vendor_banner_image}}
+              source={{uri: props.data.images[0]}}
               style={cardStyle.cartImage}
             />
           </View>
@@ -32,7 +31,7 @@ export default function CheckOutCard (props) {
         <View style={cardStyle.delivery}>
           <Text style={cardStyle.sellerName}>Canada Post</Text>
           <Text style={cardStyle.sellerName}>
-            This item will be delivered in 2 days
+            {'This item will be delivered in '+props.data.expectedDeliveryDate+' days'}
           </Text>
         </View>
       </View>
@@ -60,6 +59,9 @@ const cardStyle = StyleSheet.create ({
     shadowOffset: {width: 1, height: 1},
     shadowColor: '#333',
     shadowOpacity: 0.3,
+  },
+  cardColumn:{
+    flexDirection: 'column',
   },
   cartContent: {
     width: wp ('50%'),

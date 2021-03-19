@@ -9,18 +9,23 @@ export default function OrderCard (props) {
   var deliveryDate = new Date(props.data.deliveryDate);
   var deliveryStatus;
   var deliveryText;
+  var statusColor;
   if (props.data.status == 1) {
     deliveryText = 'Expected Delivery';
     deliveryStatus = 'Processing';
+    statusColor = '#f57f17';
   } else if (props.data.status == 2) {
     deliveryText = 'Expected Delivery';
     deliveryStatus = 'Ready For Shipment';
+    statusColor = '#e91e63';
   } else if (props.data.status == 3) {
     deliveryText = 'Expected Delivery';
     deliveryStatus = 'Shipped';
+    statusColor = '#2196f3';
   } else {
     deliveryText = 'Delivered On';
     deliveryStatus = 'Delivered';
+    statusColor = '#1b5e20';
   }
   var months = [
     'Jan',
@@ -87,7 +92,7 @@ export default function OrderCard (props) {
         </View>
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>Status</Text>
-          <Text style={orderStyle.allLblValue}>{deliveryStatus}</Text>
+          <Text style={[orderStyle.allLblValue,{color:statusColor}]}>{deliveryStatus}</Text>
         </View>
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>{deliveryText}</Text>

@@ -45,11 +45,11 @@ export default function SaveForLaterCard({data, onRemoveCart, onMoveCart}) {
             <Text style={cardStyle.prodName}>{data.product.name}</Text>
             <Text style={cardStyle.sellerName}>
               Seller :
-              {Data.sellerName.map ((seller, index) => {
+              {/* {Data.sellerName.map ((seller, index) => {
                 if (seller.id == data.product.sellerId) {
                   return <Text>{' ' + seller.name}</Text>;
                 }
-              })}
+              })} */}
             </Text>
             <Text style={cardStyle.prodPrice}>
               {'$' + prodPrice.toFixed (2)}
@@ -100,15 +100,19 @@ export default function SaveForLaterCard({data, onRemoveCart, onMoveCart}) {
               Move to Cart
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={cardStyle.btnPlaceOrderContainer}>
-            <Text
-              style={cardStyle.txtPlaceOrder}
-              onPress={() => {
-                onRemoveCart (data);
-              }}
-            >
-              Remove
-            </Text>
+          <TouchableOpacity
+            style={cardStyle.btnPlaceOrderContainerDelete}
+            onPress={() => {
+              onRemoveCart (data);
+            }}
+          >
+            <View style={{flexDirection:'row'}}>
+              <Image
+                source={require ('../assets/images/delete-black.png')}
+                style={cardStyle.iconDelete}
+              />
+              <Text style={cardStyle.txtPlaceOrder}>Remove</Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -175,6 +179,20 @@ const cardStyle = StyleSheet.create ({
     height: 20,
     width: 20,
     marginHorizontal: 10,
+  },
+  iconDelete:{
+    height: 20,
+    width: 20,
+    marginHorizontal: 20,
+  },
+  btnPlaceOrderContainerDelete: {
+    elevation: 8,
+    backgroundColor: '#009688',
+    borderRadius: 2,
+    paddingVertical: 4,
+    // paddingHorizontal: 10,
+    // marginHorizontal: 20,
+    width: wp (40),
   },
   lineStyle: {
     backgroundColor: '#E0E0E0',

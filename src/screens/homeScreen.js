@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {Avatar} from 'react-native-elements';
 import Card from '../components/card';
@@ -31,25 +32,106 @@ export default class HomeScreen extends Component {
       query: '',
       data: [],
       backup: [],
+      filterCategory: '0',
+      fromPrice: '',
+      toPrice: '',
+      sortBy: '',
     };
   }
   componentDidMount () {
-    this.makeRemoteRequest ();
+    const unsubscribe = this.props.navigation.addListener ('focus', () => {
+      this.makeRemoteRequest ();
+    });
+    return unsubscribe;
   }
   componentWillUnmount () {
     this._isMounted = false;
   }
-  // this.props.navigation.state.params.filterOperation(){
 
-  // }
-  filterOperation () {
-    // console.log ('filter called');
-  }
-  filterData = (value, fromPrice, toProce, category) => {
-    // console.log ('filter called');
+  filter = products => {
+    let filterByCatResp = this.filterByCategory (products);
+    let filterByPriceResp = this.filterByPrice (filterByCatResp);
+    let sortedArray = filterByPriceResp;
+    if (this.props.route.params.filter.sortBy == 'low') {
+      sortedArray = this.sortByLowestFirst (filterByPriceResp);
+    } else if (this.props.route.params.filter.sortBy == 'high') {
+      sortedArray = this.sortByHighestFirst (filterByPriceResp);
+    }
+    return sortedArray;
   };
+
+  filterByCategory = products => {
+    let tempData = Array.from (products);
+    let filterData = [];
+
+    if (this.props.route.params.filter.category == 0) {
+      return tempData;
+    }
+
+    for (let i = 0; i < products.length; i++) {
+      if (this.props.route.params.filter.category == tempData[i].categoryId) {
+        filterData.push (tempData[i]);
+      }
+    }
+    return filterData;
+  };
+
+  filterByPrice = products => {
+    let tempData = Array.from (products);
+    let filterData = [];
+
+    if (
+      this.props.route.params.filter.fromPrice == '' &&
+      this.props.route.params.filter.toPrice == ''
+    ) {
+      return tempData;
+    }
+
+    for (let i = 0; i < products.length; i++) {
+      if (
+        parseFloat (tempData[i].price) >=
+          parseFloat (this.props.route.params.filter.fromPrice) &&
+        parseFloat (tempData[i].price) <=
+          parseFloat (this.props.route.params.filter.toPrice)
+      ) {
+        filterData.push (tempData[i]);
+      }
+    }
+    return filterData;
+  };
+
+  sortByLowestFirst = products => {
+    let allProducts = Array.from (products);
+    let sortedArray = [];
+    while (allProducts.length > 0) {
+      let index = this.findLowest (allProducts);
+      sortedArray.push (allProducts[index]);
+      allProducts.splice (index, 1);
+    }
+    return sortedArray;
+  };
+
+  sortByHighestFirst = products => {
+    let sortedArray = this.sortByLowestFirst (products);
+    let descSortedArray = sortedArray.reverse ();
+    return descSortedArray;
+  };
+
+  findLowest = products => {
+    let cheapestProduct = products[0];
+    let cheapestProductIndex = 0;
+    for (let i = 1; i < products.length; i++) {
+      if (cheapestProduct.price > products[i].price) {
+        cheapestProduct = products[i];
+        cheapestProductIndex = i;
+      }
+    }
+    return cheapestProductIndex;
+  };
+
   makeRemoteRequest = () => {
     this._isMounted = true;
+    this.setState ({loading: true});
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -72,12 +154,25 @@ export default class HomeScreen extends Component {
       })
       .then (data => {
         if (this._isMounted) {
-          this.setState ({data: data.products});
-          this.setState ({backup: data.products});
+          if (this.props.route.params) {
+            let filterResp = this.filter (data.products);
+            this.setState ({
+              filterCategory: this.props.route.params.filter.category,
+              fromPrice: this.props.route.params.filter.fromPrice,
+              toPrice: this.props.route.params.filter.toPrice,
+              sortBy: this.props.route.params.filter.sortBy,
+              data: Array.from (filterResp),
+              backup: data.products,
+            });
+          } else {
+            this.setState ({data: data.products, backup: data.products});
+          }
         }
       })
       .catch (err => {
         console.log ('fetch error' + err);
+      }).finally (() => {
+        this.setState ({loading: false});
       });
   };
 
@@ -85,7 +180,6 @@ export default class HomeScreen extends Component {
     const formattedQuery = text.toLowerCase ();
     const filterData = this.state.backup;
     let filterResult = filterData.filter (item => {
-      // console.log (item);
       if (item.name.toLowerCase ().match (formattedQuery)) {
         return item;
       }
@@ -94,8 +188,15 @@ export default class HomeScreen extends Component {
   };
   render () {
     const renderItem = ({item}) => <Card data={item} />;
+    if (this.state.loading) {
+      return (
+        <View style={styles.activity}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    }
     return (
-      <SafeAreaView>
+      <SafeAreaView style={styles.safeView}>
         <FlatList
           data={this.state.data}
           renderItem={renderItem}
@@ -118,7 +219,15 @@ export default class HomeScreen extends Component {
           clearButtonMode="always"
         />
         <TouchableOpacity
-          onPress={() => this.props.navigation.navigate ('FilterScreen')}
+          onPress={() =>
+            this.props.navigation.navigate ('FilterScreen', {
+              filter: {
+                category: this.state.filterCategory,
+                fromPrice: this.state.fromPrice,
+                toPrice: this.state.toPrice,
+                sortBy: this.state.sortBy,
+              },
+            })}
         >
           <Image
             source={require ('../assets/images/filter.png')}
@@ -137,6 +246,15 @@ export default class HomeScreen extends Component {
   };
 }
 const styles = StyleSheet.create ({
+  activity: {
+    height: hp (100),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  safeView:{
+    backgroundColor: '#ffffff',
+    height: hp (100),
+  },
   headerContainer: {
     flexDirection: 'row',
     backgroundColor: '#ffffff',

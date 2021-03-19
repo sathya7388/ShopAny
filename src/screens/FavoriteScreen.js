@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, FlatList, TouchableOpacity,ActivityIndicator} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -10,36 +10,44 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Snackbar} from 'react-native-paper';
 import * as Data from '../data';
 
-export default function FavoriteScreen () {
+export default function FavoriteScreen (props) {
   const navigation = useNavigation ();
   const [favData, setFavData] = useState ([]);
   const [visible, setVisible] = useState (false);
   const [snackMessage, setMessage] = useState ('');
-  useEffect (() => {
-    console.log ('fav useeffect call');
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    };
+  const [isLoading, setLoading] = useState (false);
+  useEffect (
+    () => {
+      const unsubscribe = props.navigation.addListener ('focus', () => {
+        setLoading (true)
+        console.log ('fav useeffect call');
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        };
 
-    fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/getFavs',
-      requestOptions
-    )
-      .then (response => {
-        return response.json ();
-      })
-      .then (responseData => {
-        setFavData (responseData.products);
-      })
-      .catch (error => console.error (error))
-      .finally (() => {
-        // setLoading (false)
+        fetch (
+          'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/getFavs',
+          requestOptions
+        )
+          .then (response => {
+            return response.json ();
+          })
+          .then (responseData => {
+            setFavData (responseData.products);
+          })
+          .catch (error => console.error (error))
+          .finally (() => {
+            setLoading (false)
+          });
       });
-  }, []);
+      return unsubscribe;
+    },
+    [props.navigation]
+  );
 
   function removeFav (data) {
     // console.log (data);
@@ -91,6 +99,13 @@ export default function FavoriteScreen () {
   const renderItem = ({item}) => (
     <FavCard data={item} removeFromFav={removeFav} addToCart={addCart} />
   );
+  if (isLoading) {
+    return (
+      <View style={styles.activity}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
   if (favData.length > 0) {
     return (
       <View style={{flex: 1}}>
@@ -132,7 +147,7 @@ export default function FavoriteScreen () {
           </View>
         </View>
 
-        <View style={{ flex:1,justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 
           <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>
             Favorites is empty!
@@ -150,10 +165,9 @@ export default function FavoriteScreen () {
   }
 }
 const styles = StyleSheet.create ({
-  Container:{
+  Container: {
     flexDirection: 'column',
     height: hp (100),
-    
   },
   headerContainer: {
     flexDirection: 'row',
@@ -183,5 +197,10 @@ const styles = StyleSheet.create ({
     fontSize: 14,
     color: '#fff',
     alignSelf: 'center',
+  },
+  activity: {
+    height: hp (100),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

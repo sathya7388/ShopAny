@@ -18,14 +18,16 @@ import {useNavigation} from '@react-navigation/native';
 
 export default function CheckoutScreen (props) {
   const navigation = useNavigation ();
+  const [modalVisible, setModalVisible] = useState (false);
   let productdata = [];
   productdata = props.route.params.productData;
-  
+  console.log (props.route.params.screenName);
   let totalprice = 0, productPrice = 0, deliveryFee = 0, discount = 0;
 
   for (var i = 0; i < productdata.length; i++) {
     productPrice +=
-      parseFloat (productdata[i].price) * parseFloat (productdata[i].prodQuantity);
+      parseFloat (productdata[i].price) *
+      parseFloat (productdata[i].prodQuantity);
     deliveryFee +=
       parseFloat (productdata[i].deliveryFee) *
       parseFloat (productdata[i].prodQuantity);
@@ -40,8 +42,85 @@ export default function CheckoutScreen (props) {
     totalprice = productPrice + deliveryFee - discount;
     deliveryFee = '$' + deliveryFee;
   }
+  function formatDate (dateValue) {
+    let formattedDate = null;
+    if (typeof dateValue == 'string') {
+      formattedDate = new Date (
+        dateValue.replace (/-/g, '\/')
+      ).toLocaleDateString ('en-US');
+    } else {
+      formattedDate = dateValue.toLocaleDateString ('en-US');
+    }
+    return formattedDate;
+  }
+  function placeOrder () {
+    var orderArray = [];
+    for (var i = 0; i < productdata.length; i++) {
+      var productMap = {};
+      productMap.user = '60518967ed36fa05ec9b4ef1';
+      productMap.status = 1;
+      productMap.quantity = productdata[i].prodQuantity;
+      productMap.product = productdata[i]._id;
+      productMap.sellerId = productdata[i].sellerId;
+      productMap.placedDate = formatDate (new Date ());
+      var date = new Date (); // Get current Date
+      date.setDate (date.getDate () + productdata[i].expectedDeliveryDate);
+      productMap.deliveryDate = formatDate (new Date (date));
+      orderArray.push (productMap);
+    }
+    console.log (orderArray);
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify (orderArray),
+    };
+    fetch ('https://shopany-api.herokuapp.com/api/order/add', requestOptions)
+      .then (response => {
+        return response.json ();
+      })
+      .then (responseData => {
+        if (responseData.status == 'success') {
+          setModalVisible (!modalVisible);
+          if (props.route.params.screenName == 'cartScreen') {
+            for (var i = 0; i < productdata.length; i++) {
+              removeFromCart (productdata[i]._id);
+            }
+          }
+        }
+      })
+      .catch (error => console.error (error))
+      .finally (() => {
+        // setLoading (false)
+      });
+  }
+  function removeFromCart (id) {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    };
+    fetch (
+      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/removeCart/' +
+        id,
+      requestOptions
+    )
+      .then (response => {
+        return response.json ();
+      })
+      .then (responseData => {
+        return responseData;
+      })
+      .catch (error => console.error (error))
+      .finally (() => {
+        // setLoading (false)
+      });
+  }
   const renderItem = ({item}) => <CheckoutCard data={item} />;
-  const [modalVisible, setModalVisible] = useState (false);
   return (
     <SafeAreaView>
       <Modal
@@ -158,7 +237,7 @@ export default function CheckoutScreen (props) {
             <View style={checkoutStyle.btnorderview}>
               <TouchableOpacity
                 style={checkoutStyle.btnPlaceOrderContainer}
-                onPress={() => setModalVisible (!modalVisible)}
+                onPress={placeOrder}
               >
                 <Text style={checkoutStyle.txtPlaceOrder}>
                   Place Order

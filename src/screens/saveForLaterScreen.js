@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {FlatList, View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {FlatList, View, StyleSheet, TouchableOpacity, Text,ActivityIndicator} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LaterCard from '../components/saveForLaterCard';
 import {Snackbar} from 'react-native-paper';
@@ -14,10 +14,12 @@ export default function CartScreen (props) {
   const [cartData, setCartData] = useState ([]);
   const [visible, setVisible] = useState (false);
   const [snackMessage, setMessage] = useState ('');
+  const [isLoading, setLoading] = useState (false);
 
   useEffect (
     () => {
       const unsubscribe = props.navigation.addListener ('focus', () => {
+        setLoading (true)
         const requestOptions = {
           method: 'POST',
           headers: {
@@ -47,7 +49,7 @@ export default function CartScreen (props) {
             // console.error (error)
           })
           .finally (() => {
-            // setLoading (false)
+            setLoading (false)
           });
       });
       return unsubscribe;
@@ -131,6 +133,14 @@ export default function CartScreen (props) {
   const renderItem = ({item}) => (
     <LaterCard data={item} onRemoveCart={removeCart} onMoveCart={moveCart} />
   );
+  if (isLoading) {
+    // console.log('past spinner')
+    return (
+      <View style={cart.activity}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
   if (cartData.length > 0) {
     console.log('render call more 0');
     return (
@@ -178,6 +188,11 @@ export default function CartScreen (props) {
 }
 
 const cart = StyleSheet.create ({
+  activity: {
+    height: hp (100),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   shopNow: {
     elevation: 8,
     backgroundColor: '#009688',

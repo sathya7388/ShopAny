@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  Modal,
+  Pressable,
+  TextInput,
 } from 'react-native';
 import {Button} from 'react-native-elements';
 import {Snackbar} from 'react-native-paper';
@@ -23,11 +26,13 @@ export default class DetailScreen extends Component {
     this.state = {
       productData: [this.props.route.params.productData],
       availabilty: '',
+      stockData: true,
       visible: false,
-      quantityData: '1',
+      quantityData: 1,
       isFavorite: false,
       snackMessage: '',
       snackVisible: false,
+      modalVisible: false,
       dropDownData: [
         {
           label: '1',
@@ -38,9 +43,9 @@ export default class DetailScreen extends Component {
   }
   componentDidMount () {
     if (this.state.productData[0].quantity > 1) {
-      this.setState ({availabilty: 'In Stock'});
+      this.setState ({availabilty: 'In Stock', stockData: true});
     } else {
-      this.setState ({availabilty: 'Currently Unavailable'});
+      this.setState ({availabilty: 'Currently Unavailable', stockData: false});
     }
     this.getFavList ();
   }
@@ -49,7 +54,10 @@ export default class DetailScreen extends Component {
     productObj.prodQuantity = parseInt (this.state.quantityData);
     // console.log (productObj);
     var prodData = [productObj];
-    this.props.navigation.navigate ('CheckoutScreen', {productData: prodData});
+    this.props.navigation.navigate ('CheckoutScreen', {
+      productData: prodData,
+      screenName: 'cartScreen',
+    });
   };
   getFavList = () => {
     const requestOptions = {
@@ -104,7 +112,7 @@ export default class DetailScreen extends Component {
         return response.json ();
       })
       .then (responseData => {
-        if(responseData.status = 'sucess'){
+        if ((responseData.status = 'sucess')) {
           this.setState ({
             snackMessage: 'Added to Cart',
             snackVisible: true,
@@ -115,7 +123,9 @@ export default class DetailScreen extends Component {
       .finally (() => {
         // setLoading (false)
       });
-    
+  };
+  showDialog = () => {
+    this.setState ({modalVisible: !this.state.modalVisible});
   };
   updateFav = () => {
     let url = '';
@@ -198,28 +208,90 @@ export default class DetailScreen extends Component {
   render () {
     return (
       <View style={styles.container}>
-        <SliderBox images={this.state.productData[0].images} />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            this.setState ({modalVisible: !this.state.modalVisible});
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Quantity
+              </Text>
+              <TextInput
+                keyboardType={'numeric'}
+                maxLength={2}
+                onChangeText={text => {
+                  this.setState ({quantityData: text});
+                }}
+                value={this.state.quantityData.toString ()}
+                textAlign={'center'}
+                style={{
+                  borderColor: 'gray',
+                  borderWidth: 0.5,
+                  borderRadius: 4,
+                  width: wp (30),
+                  height: hp (5),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginBottom: 10,
+                }}
+              />
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => {
+                  if (this.state.quantityData == 0) {
+                    this.setState ({quantityData: 1});
+                  }
+                  this.setState ({modalVisible: !this.state.modalVisible});
+                }}
+              >
+                <Text style={styles.textStyle}>Ok</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+        <SliderBox
+          images={this.state.productData[0].images}
+          disableOnPress={true}
+        />
         <ScrollView>
+          <View style={styles.lineStyle} />
           <View style={styles.productContent}>
-            <Text style={styles.productName}>
-              {this.state.productData[0].name}
-            </Text>
+            <View style={{flexDirection: 'row'}}>
+              <View style={styles.productNameContainer}>
+                <Text style={styles.productName} numberOfLines={10}>
+                  {this.state.productData[0].name}
+                </Text>
+              </View>
+              <TouchableOpacity onPress={this.updateFav}>
+                <Image
+                  source={
+                    this.state.isFavorite === true
+                      ? require ('../assets/images/heartSelected.png')
+                      : require ('../assets/images/heart-unselected.png')
+                  }
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+            </View>
             <Text style={styles.productPrice}>
               {'$' + this.state.productData[0].price}
             </Text>
-            <Text style={styles.productName}>{this.state.availabilty}</Text>
-            <Text>Qty : 1</Text>
-            {/* <DropDownPicker
-              items={this.state.dropDownData}
-              defaultValue={this.state.quantityData}
-              containerStyle={{height: wp (10)}}
-              style={{backgroundColor: '#fafafa'}}
-              itemStyle={{
-                justifyContent: 'flex-start',
-              }}
-              dropDownStyle={{backgroundColor: '#fafafa'}}
-              onChangeItem={item => this.setState ({quantityData: item.value})}
-            /> */}
+            <Text
+              style={[
+                styles.productName,
+                this.state.stockData ? styles.instock : styles.nostock,
+              ]}
+            >
+              {this.state.availabilty}
+            </Text>
+            <TouchableOpacity style={styles.quantity} onPress={this.showDialog}>
+              <Text>{'Qty : ' + this.state.quantityData}</Text>
+            </TouchableOpacity>
             <AirbnbRating
               count={5}
               isDisabled={true}
@@ -236,12 +308,7 @@ export default class DetailScreen extends Component {
                 {this.state.productData[0].description}
               </Text>
             </View>
-            <TouchableOpacity onPress={this.updateFav}>
-              <Image
-                source={require ('../assets/images/filter.png')}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
+
           </View>
         </ScrollView>
         <View style={styles.btnView}>
@@ -275,6 +342,7 @@ export default class DetailScreen extends Component {
 const styles = StyleSheet.create ({
   container: {
     flex: 1,
+    backgroundColor: '#ffffff',
   },
   starRating: {
     left: 0,
@@ -283,6 +351,10 @@ const styles = StyleSheet.create ({
   productContent: {
     paddingVertical: 15,
     paddingHorizontal: 15,
+  },
+  productNameContainer: {
+    width: wp (80),
+    marginRight: 20,
   },
   productName: {
     fontSize: hp (2),
@@ -309,5 +381,70 @@ const styles = StyleSheet.create ({
     paddingVertical: 10,
     paddingHorizontal: 10,
     width: wp ('50%'),
+  },
+  quantity: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 5,
+    backgroundColor: '#CDCDCD',
+    borderWidth: 0.3,
+    borderRadius: 5,
+    paddingVertical: 3,
+    width: wp (13),
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 5,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  icon: {
+    height: hp (2.6),
+    width: wp (6),
+    justifyContent: 'flex-end',
+    marginRight: 5,
+    marginTop:5,
+  },
+  lineStyle: {
+    backgroundColor: '#E0E0E0',
+    height: 1,
+  },
+  instock: {
+    color: 'green',
+  },
+  nostock: {
+    color: 'red',
   },
 });

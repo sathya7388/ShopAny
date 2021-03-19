@@ -19,7 +19,8 @@ import {Snackbar} from 'react-native-paper';
 
 export default function CartScreen (props) {
   const navigation = useNavigation ();
-  const [isLoading, setLoading] = useState (true);
+  const [isLoading, setLoading] = useState (false);
+  const [transSpinner, setTransSpinner] = useState (false);
   const [visible, setVisible] = useState (false);
   const [snackMessage, setMessage] = useState ('');
   const [cartData, setCartData] = useState ([]);
@@ -105,10 +106,11 @@ export default function CartScreen (props) {
       .catch (error => console.error (error))
       .finally (() => setLoading (false));
   }
-  
+
   useEffect (
     () => {
       const unsubscribe = props.navigation.addListener ('focus', () => {
+        setLoading (true);
         const requestOptions = {
           method: 'POST',
           headers: {
@@ -143,6 +145,10 @@ export default function CartScreen (props) {
     [props.navigation]
   );
 
+  function updateCart(){
+
+  }
+
   useEffect (
     () => {
       priceCalculation ();
@@ -156,6 +162,7 @@ export default function CartScreen (props) {
         cartData[i].quantity--;
       }
     }
+    updateCart();
     priceCalculation ();
   }
 
@@ -165,6 +172,7 @@ export default function CartScreen (props) {
         cartData[i].quantity++;
       }
     }
+    updateCart();
     priceCalculation ();
   }
 
@@ -187,7 +195,11 @@ export default function CartScreen (props) {
       totalprice = productPrice - discount;
       deliveryFee = 'Free';
     } else {
-      totalprice = productPrice + deliveryFee - discount;
+      deliveryFee = deliveryFee.toFixed (2);
+      totalprice =
+        parseFloat (productPrice) +
+        parseFloat (deliveryFee) -
+        parseFloat (discount);
     }
     setPrice ({
       pri: productPrice,
@@ -196,7 +208,18 @@ export default function CartScreen (props) {
       tot: totalprice,
     });
   }
-
+  function continueCheckout () {
+    var chekoutArray = [];
+    for (var i = 0; i < cartData.length; i++) {
+      var productObj = cartData[i].product;
+      productObj.prodQuantity = cartData[i].quantity;
+      chekoutArray.push (productObj);
+    }
+    navigation.navigate ('CheckoutScreen', {
+      productData: chekoutArray,
+      screenName: 'cartScreen',
+    });
+  }
   const renderItem = ({item}) => (
     <CartCard
       data={item}
@@ -206,85 +229,85 @@ export default function CartScreen (props) {
       onStepperUp={increaseStepper}
     />
   );
+  if (isLoading) {
+    return (
+      <View style={cart.activity}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
   if (cartData.length > 0) {
     return (
       <View style={{flex: 1}}>
-        <SafeAreaView>
-          {isLoading
-            ? <ActivityIndicator />
-            : <FlatList
-                data={cartData}
-                renderItem={renderItem}
-                keyExtractor={item => item.product._id}
-                ListFooterComponent={
-                  <View style={{flex: 1, flexDirection: 'column'}}>
-                    <View style={cart.priceBreakdown}>
-                      <Text>Price Detail</Text>
-                      <View
-                        style={{
-                          backgroundColor: '#A9A9A9',
-                          height: 0.5,
-                          marginVertical: 3,
-                        }}
-                      />
-                      <View style={cart.priceDetailRow}>
-                        <Text style={cart.priceBDText}>Price</Text>
-                        <Text style={cart.priceBDValue}>
-                          {'$' + price.pri.toFixed (2)}
-                        </Text>
-                      </View>
-                      <View style={cart.priceDetailRow}>
-                        <Text style={cart.priceBDText}>Discount</Text>
-                        <Text style={cart.priceBDValue}>
-                          {'-$' + price.dis.toFixed (2)}
-                        </Text>
-                      </View>
-                      <View style={cart.priceDetailRow}>
-                        <Text style={cart.priceBDText}>Delivery Charges</Text>
-                        <Text style={cart.priceBDValue}>
-                          {() => {
-                            if (price.deFee == 'Free') return <Text>Free</Text>;
-                            else return <Text>(price.deFee).toFixed (2)</Text>;
-                          }}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          backgroundColor: '#A9A9A9',
-                          height: 0.5,
-                          marginVertical: 5,
-                        }}
-                      />
-                      <View style={cart.priceDetailRow}>
-                        <Text>Total Amount</Text>
-                        <Text style={cart.totalPrice}>
-                          {'$' + price.tot.toFixed (2)}
-                        </Text>
-                      </View>
 
-                    </View>
-                    <View
-                      style={{
-                        backgroundColor: '#000000',
-                        height: 0.5,
-                      }}
-                    />
-                    <View style={cart.btnorderview}>
-                      <TouchableOpacity
-                        style={cart.btnPlaceOrderContainer}
-                        onPress={() =>
-                          navigation.navigate ('CheckoutScreen', {
-                            productData: cartData,
-                          })}
-                      >
-                        <Text style={cart.txtPlaceOrder}>
-                          Continue to Checkout
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
+        <SafeAreaView>
+          <FlatList
+            data={cartData}
+            renderItem={renderItem}
+            keyExtractor={item => item.product._id}
+            ListFooterComponent={
+              <View style={{flex: 1, flexDirection: 'column'}}>
+                <View style={cart.priceBreakdown}>
+                  <Text>Price Detail</Text>
+                  <View
+                    style={{
+                      backgroundColor: '#A9A9A9',
+                      height: 0.5,
+                      marginVertical: 3,
+                    }}
+                  />
+                  <View style={cart.priceDetailRow}>
+                    <Text style={cart.priceBDText}>Price</Text>
+                    <Text style={cart.priceBDValue}>
+                      {'$' + price.pri.toFixed (2)}
+                    </Text>
                   </View>
-                }
-              />}
+                  <View style={cart.priceDetailRow}>
+                    <Text style={cart.priceBDText}>Discount</Text>
+                    <Text style={cart.priceBDValue}>
+                      {'-$' + price.dis.toFixed (2)}
+                    </Text>
+                  </View>
+                  <View style={cart.priceDetailRow}>
+                    <Text style={cart.priceBDText}>Delivery Charges</Text>
+                    <Text style={cart.priceBDValue}>
+                      {price.deFee}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: '#A9A9A9',
+                      height: 0.5,
+                      marginVertical: 5,
+                    }}
+                  />
+                  <View style={cart.priceDetailRow}>
+                    <Text>Total Amount</Text>
+                    <Text style={cart.totalPrice}>
+                      {'$' + price.tot.toFixed (2)}
+                    </Text>
+                  </View>
+
+                </View>
+                <View
+                  style={{
+                    backgroundColor: '#000000',
+                    height: 0.5,
+                  }}
+                />
+                <View style={cart.btnorderview}>
+                  <TouchableOpacity
+                    style={cart.btnPlaceOrderContainer}
+                    onPress={continueCheckout}
+                  >
+                    <Text style={cart.txtPlaceOrder}>
+                      Continue to Checkout
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            }
+          />
         </SafeAreaView>
         <Snackbar
           visible={visible}
@@ -320,6 +343,11 @@ export default function CartScreen (props) {
   }
 }
 const cart = StyleSheet.create ({
+  activity: {
+    height: hp (100),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   lineStyle: {
     backgroundColor: '#E0E0E0',
     height: 8,

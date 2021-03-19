@@ -21,7 +21,6 @@ export default function FavCard({data, removeFromFav, addToCart}) {
         <View style={favStyle.prodCol}>
           <Image
             source={{uri: data.images[0]}}
-            // source={require ('../assets/images/one.jpg')}
             style={favStyle.orderImage}
           />
         </View>
