@@ -7,6 +7,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import * as Data from '../data'
 
 export default function CurrentOrderScreen (props) {
   const [orderData, setOrderData] = useState ([]);
@@ -24,7 +25,7 @@ export default function CurrentOrderScreen (props) {
         };
 
         fetch (
-          'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/orders',
+          'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/orders',
           requestOptions
         )
           .then (response => {
@@ -77,7 +78,7 @@ export default function CurrentOrderScreen (props) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>
-          There are no Past Orders
+          No active orders
         </Text>
         {/* <Text>Add items in Cart</Text> */}
         <TouchableOpacity

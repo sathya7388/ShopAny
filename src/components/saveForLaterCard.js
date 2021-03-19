@@ -13,6 +13,16 @@ export default function SaveForLaterCard({data, onRemoveCart, onMoveCart}) {
   const [minusdisabled, setMinusDisabled] = useState (true);
   const [plusdisabled, setPlusDisabled] = useState (false);
   const productPrice = parseFloat (data.product.price);
+  
+  let sellerId = data.product.sellerId;
+  let sellerNameValue = '';
+  for(var i =0;i<Data.sellerName.length;i++){
+    if(Data.sellerName[i].id == sellerId){
+      sellerNameValue = Data.sellerName[i].name;
+    }
+  }
+
+
   useEffect (
     () => {
       setPrice (productPrice * quantity);
@@ -44,12 +54,7 @@ export default function SaveForLaterCard({data, onRemoveCart, onMoveCart}) {
           <View style={cardStyle.cartContent}>
             <Text style={cardStyle.prodName}>{data.product.name}</Text>
             <Text style={cardStyle.sellerName}>
-              Seller :
-              {/* {Data.sellerName.map ((seller, index) => {
-                if (seller.id == data.product.sellerId) {
-                  return <Text>{' ' + seller.name}</Text>;
-                }
-              })} */}
+            {'Seller : '+sellerNameValue}
             </Text>
             <Text style={cardStyle.prodPrice}>
               {'$' + prodPrice.toFixed (2)}
@@ -101,18 +106,12 @@ export default function SaveForLaterCard({data, onRemoveCart, onMoveCart}) {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={cardStyle.btnPlaceOrderContainerDelete}
+            style={[cardStyle.btnPlaceOrderContainer,{backgroundColor:'#78909c'}]}
             onPress={() => {
               onRemoveCart (data);
             }}
           >
-            <View style={{flexDirection:'row'}}>
-              <Image
-                source={require ('../assets/images/delete-black.png')}
-                style={cardStyle.iconDelete}
-              />
               <Text style={cardStyle.txtPlaceOrder}>Remove</Text>
-            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -180,20 +179,6 @@ const cardStyle = StyleSheet.create ({
     width: 20,
     marginHorizontal: 10,
   },
-  iconDelete:{
-    height: 20,
-    width: 20,
-    marginHorizontal: 20,
-  },
-  btnPlaceOrderContainerDelete: {
-    elevation: 8,
-    backgroundColor: '#009688',
-    borderRadius: 2,
-    paddingVertical: 4,
-    // paddingHorizontal: 10,
-    // marginHorizontal: 20,
-    width: wp (40),
-  },
   lineStyle: {
     backgroundColor: '#E0E0E0',
     height: 1,
@@ -207,6 +192,7 @@ const cardStyle = StyleSheet.create ({
     borderRadius: 8,
   },
   btnPlaceOrderContainer: {
+    marginRight:10,
     elevation: 8,
     backgroundColor: '#009688',
     borderRadius: 2,

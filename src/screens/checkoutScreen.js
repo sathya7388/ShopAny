@@ -15,13 +15,14 @@ import {
 import CheckoutCard from '../components/checkoutCard';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
+import * as Data from '../data';
 
 export default function CheckoutScreen (props) {
   const navigation = useNavigation ();
   const [modalVisible, setModalVisible] = useState (false);
   let productdata = [];
   productdata = props.route.params.productData;
-  console.log (props.route.params.screenName);
+  // console.log (props.route.params.screenName);
   let totalprice = 0, productPrice = 0, deliveryFee = 0, discount = 0;
 
   for (var i = 0; i < productdata.length; i++) {
@@ -40,7 +41,7 @@ export default function CheckoutScreen (props) {
     deliveryFee = 'Free';
   } else {
     totalprice = productPrice + deliveryFee - discount;
-    deliveryFee = '$' + deliveryFee;
+    deliveryFee = '$' + deliveryFee.toFixed (2);
   }
   function formatDate (dateValue) {
     let formattedDate = null;
@@ -57,7 +58,7 @@ export default function CheckoutScreen (props) {
     var orderArray = [];
     for (var i = 0; i < productdata.length; i++) {
       var productMap = {};
-      productMap.user = '60518967ed36fa05ec9b4ef1';
+      productMap.user = Data.currentUser[0]._id;
       productMap.status = 1;
       productMap.quantity = productdata[i].prodQuantity;
       productMap.product = productdata[i]._id;
@@ -68,7 +69,7 @@ export default function CheckoutScreen (props) {
       productMap.deliveryDate = formatDate (new Date (date));
       orderArray.push (productMap);
     }
-    console.log (orderArray);
+    // console.log (orderArray);
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -105,7 +106,9 @@ export default function CheckoutScreen (props) {
       },
     };
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/removeCart/' +
+      'https://shopany-api.herokuapp.com/api/user/' +
+        Data.currentUser[0]._id +
+        '/removeCart/' +
         id,
       requestOptions
     )
@@ -165,13 +168,16 @@ export default function CheckoutScreen (props) {
             </Text>
             <View style={checkoutStyle.addressRow}>
               <Text style={{fontWeight: 'bold', paddingBottom: 5}}>
-                Jon Snow
+                {Data.currentUser[0].name}
               </Text>
               <Text style={checkoutStyle.addressData}>
+                {Data.currentUser[0].address}
+              </Text>
+              {/* <Text style={checkoutStyle.addressData}>
                 221, Mammoth Hall Dr
               </Text>
               <Text style={checkoutStyle.addressData}>Scarborough, ON</Text>
-              <Text style={checkoutStyle.addressData}>M1K 1B6</Text>
+              <Text style={checkoutStyle.addressData}>M1K 1B6</Text> */}
             </View>
             <Text
               style={{
@@ -198,13 +204,13 @@ export default function CheckoutScreen (props) {
               <View style={checkoutStyle.priceDetailRow}>
                 <Text style={checkoutStyle.priceBDText}>Price</Text>
                 <Text style={checkoutStyle.priceBDValue}>
-                  {'$' + productPrice}
+                  {'$' + productPrice.toFixed (2)}
                 </Text>
               </View>
               <View style={checkoutStyle.priceDetailRow}>
                 <Text style={checkoutStyle.priceBDText}>Discount</Text>
                 <Text style={checkoutStyle.priceBDValue}>
-                  {'-$' + discount}
+                  {'-$' + discount.toFixed (2)}
                 </Text>
               </View>
               <View style={checkoutStyle.priceDetailRow}>
@@ -224,7 +230,9 @@ export default function CheckoutScreen (props) {
               />
               <View style={checkoutStyle.priceDetailRow}>
                 <Text>Total Amount</Text>
-                <Text style={checkoutStyle.totalPrice}>{'$' + totalprice}</Text>
+                <Text style={checkoutStyle.totalPrice}>
+                  {'$' + totalprice.toFixed (2)}
+                </Text>
               </View>
 
             </View>
@@ -236,7 +244,7 @@ export default function CheckoutScreen (props) {
             />
             <View style={checkoutStyle.btnorderview}>
               <TouchableOpacity
-                style={checkoutStyle.btnPlaceOrderContainer}
+                style={[checkoutStyle.btnPlaceOrderContainer,{backgroundColor:'#ef6c00'}]}
                 onPress={placeOrder}
               >
                 <Text style={checkoutStyle.txtPlaceOrder}>

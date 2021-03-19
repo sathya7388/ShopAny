@@ -4,9 +4,10 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import * as Data from '../data';
 
 export default function OrderCard (props) {
-  var deliveryDate = new Date(props.data.deliveryDate);
+  var deliveryDate = new Date (props.data.deliveryDate);
   var deliveryStatus;
   var deliveryText;
   var statusColor;
@@ -48,6 +49,15 @@ export default function OrderCard (props) {
     ',' +
     deliveryDate.getFullYear ();
   // console.log (dateValue);
+  let sellerId = props.data.sellerId;
+  let sellerNameValue = '';
+  console.log(sellerId);
+  console.log(props.data);
+  for (var i = 0; i < Data.sellerName.length; i++) {
+    if (Data.sellerName[i].id == sellerId) {
+      sellerNameValue = Data.sellerName[i].name;
+    }
+  }
   return (
     <View style={orderStyle.container}>
       <View style={orderStyle.prodRow}>
@@ -73,15 +83,15 @@ export default function OrderCard (props) {
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>Order Total :</Text>
           <Text style={orderStyle.allLblValue}>
-            {'$' + (props.data.product.price*props.data.quantity)}
+            {'$' + props.data.product.price * props.data.quantity}
           </Text>
         </View>
         <View style={orderStyle.soldContainer}>
           <Text style={orderStyle.lblSellerName}>
             Sold and Shipped By
-            {' '}
+
             <Text style={{fontWeight: 'bold'}}>
-              ABC
+              {' ' + sellerNameValue}
             </Text>
           </Text>
         </View>
@@ -92,7 +102,9 @@ export default function OrderCard (props) {
         </View>
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>Status</Text>
-          <Text style={[orderStyle.allLblValue,{color:statusColor}]}>{deliveryStatus}</Text>
+          <Text style={[orderStyle.allLblValue, {color: statusColor}]}>
+            {deliveryStatus}
+          </Text>
         </View>
         <View style={orderStyle.textRowContainer}>
           <Text style={orderStyle.lblQtyName}>{deliveryText}</Text>

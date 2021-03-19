@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {Button} from 'react-native-elements';
 import {Snackbar} from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
+import * as Data from '../data';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -69,7 +69,9 @@ export default class DetailScreen extends Component {
     };
 
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/getFavs',
+      'https://shopany-api.herokuapp.com/api/user/' +
+        Data.currentUser[0]._id +
+        '/getFavs',
       requestOptions
     )
       .then (response => {
@@ -99,13 +101,15 @@ export default class DetailScreen extends Component {
       },
       body: JSON.stringify ({
         productId: this.state.productData[0]._id,
-        quantity: 1,
+        quantity: this.state.quantityData,
         cartType: 0,
       }),
     };
 
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/addCart',
+      'https://shopany-api.herokuapp.com/api/user/' +
+        Data.currentUser[0]._id +
+        '/addCart',
       requestOptions
     )
       .then (response => {
@@ -133,13 +137,17 @@ export default class DetailScreen extends Component {
       //remove
       // this.setState ({isFavorite: false});
       url =
-        'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/removeFav/' +
+        'https://shopany-api.herokuapp.com/api/user/' +
+        Data.currentUser[0]._id +
+        '/removeFav/' +
         this.state.productData[0]._id;
     } else {
       //add
       // this.setState ({isFavorite: true});
       url =
-        'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/addFav/' +
+        'https://shopany-api.herokuapp.com/api/user/' +
+        Data.currentUser[0]._id +
+        '/addFav/' +
         this.state.productData[0]._id;
     }
     const requestOptions = {
@@ -311,10 +319,23 @@ export default class DetailScreen extends Component {
 
           </View>
         </ScrollView>
-        <View style={styles.btnView}>
-          <View style={styles.btn}>
-            <Button title="Buy Now" raised={true} onPress={this.checkOutCall} />
-          </View>
+
+        <View style={styles.btnorderview}>
+          <TouchableOpacity
+            style={styles.btnPlaceOrderContainer}
+            onPress={this.addToCart}
+          >
+            <Text style={styles.txtPlaceOrder}>Add to Cart</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.btnPlaceOrderContainer, {backgroundColor: '#ef6c00'}]}
+            onPress={this.checkOutCall}
+          >
+            <Text style={styles.txtPlaceOrder}>Buy Now</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* <View style={styles.btnView}>
           <View style={styles.btn}>
             <Button
               title="Add to Cart"
@@ -322,7 +343,10 @@ export default class DetailScreen extends Component {
               onPress={this.addToCart}
             />
           </View>
-        </View>
+          <View style={[styles.btn, {backgroundColor: '#ef6c00'}]}>
+            <Button title="Buy Now" raised={true} onPress={this.checkOutCall} />
+          </View>
+        </View> */}
 
         <Snackbar
           visible={this.state.snackVisible}
@@ -382,6 +406,31 @@ const styles = StyleSheet.create ({
     paddingHorizontal: 10,
     width: wp ('50%'),
   },
+  btnorderview: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  btnPlaceOrderContainer: {
+    alignItems:'center',
+    justifyContent: 'center',
+    marginRight:10,
+    elevation: 8,
+    backgroundColor: '#009688',
+    borderRadius: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 30,
+    marginHorizontal: 20,
+    width: wp (40),
+    height:hp(5),
+  },
+  txtPlaceOrder: {
+    fontSize: 14,
+    color: '#fff',
+    alignSelf: 'center',
+  },
   quantity: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -435,7 +484,7 @@ const styles = StyleSheet.create ({
     width: wp (6),
     justifyContent: 'flex-end',
     marginRight: 5,
-    marginTop:5,
+    marginTop: 5,
   },
   lineStyle: {
     backgroundColor: '#E0E0E0',

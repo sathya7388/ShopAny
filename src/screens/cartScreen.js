@@ -47,7 +47,7 @@ export default function CartScreen (props) {
     };
 
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/addCart',
+      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/addCart',
       requestOptions
     )
       .then (response => {
@@ -56,7 +56,7 @@ export default function CartScreen (props) {
       .then (responseData => {
         if ((responseData.status = 'sucess')) {
           let tempArray = cartData;
-          console.log (tempArray);
+          // console.log (tempArray);
           for (var i = 0; i < tempArray.length; i++) {
             if (tempArray[i].product._id == data.product._id) {
               tempArray.splice (i, 1);
@@ -82,7 +82,7 @@ export default function CartScreen (props) {
     };
     let rmCartId = data.product._id;
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/removeCart/' +
+      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/removeCart/' +
         rmCartId,
       requestOptions
     )
@@ -120,7 +120,7 @@ export default function CartScreen (props) {
         };
 
         fetch (
-          'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/getCart',
+          'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/getCart',
           requestOptions
         )
           .then (response => {
@@ -145,51 +145,94 @@ export default function CartScreen (props) {
     [props.navigation]
   );
 
-  function updateCart(){
+  function updateCart (stepperArray) {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify ({
+        productId: stepperArray.product._id,
+        quantity: stepperArray.quantity,
+        cartType: 0,
+      }),
+    };
 
+    fetch (
+      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/addCart',
+      requestOptions
+    )
+      .then (response => {
+        return response.json ();
+      })
+      .then (responseData => {
+        if ((responseData.status = 'sucess')) {
+          // console.log ('price calc called');
+          priceCalculation ();
+        }
+      })
+      .catch (error => console.error (error))
+      .finally (() => {
+        // setLoading (false)
+      });
   }
 
   useEffect (
     () => {
+      // console.log ('called from use effect');
       priceCalculation ();
     },
     [cartData]
   );
 
   function decreaseStepper (data) {
+    // console.log('********');
+    var stepperArray = [];
     for (var i = 0; i < cartData.length; i++) {
-      if (cartData[i].id == data.id) {
+      if (cartData[i].product._id == data.product._id) {
+        // console.log('if cont ********')
         cartData[i].quantity--;
+        stepperArray = cartData[i];
       }
     }
-    updateCart();
-    priceCalculation ();
+    // console.log(stepperArray);
+    updateCart (stepperArray);
   }
 
   function increaseStepper (data) {
+    // console.log('********');
+    var stepperArray = [];
+    // console.log(data);
+    // console.log(cartData);
     for (var i = 0; i < cartData.length; i++) {
-      if (cartData[i].id == data.id) {
+      if (cartData[i].product._id == data.product._id) {
+        // console.log('if cont ********')
         cartData[i].quantity++;
+        stepperArray = cartData[i];
       }
     }
-    updateCart();
-    priceCalculation ();
+    // console.log(stepperArray);
+    updateCart (stepperArray);
   }
 
   function priceCalculation () {
-    // console.log ('price calc called');
+    
     let totalprice = 0, productPrice = 0, deliveryFee = 0, discount = 0;
     for (var i = 0; i < cartData.length; i++) {
       // console.log (cartData[i]);
       productPrice +=
         parseFloat (cartData[i].product.price) *
         parseFloat (cartData[i].quantity);
+        // console.log (productPrice);
       deliveryFee +=
         parseFloat (cartData[i].product.deliveryFee) *
         parseFloat (cartData[i].quantity);
+        // console.log (deliveryFee);
       discount +=
         parseFloat (cartData[i].product.discount) *
         parseFloat (cartData[i].quantity);
+        // console.log (discount);
     }
     if (deliveryFee == 0) {
       totalprice = productPrice - discount;
@@ -201,6 +244,7 @@ export default function CartScreen (props) {
         parseFloat (deliveryFee) -
         parseFloat (discount);
     }
+    // console.log (totalprice);
     setPrice ({
       pri: productPrice,
       dis: discount,
@@ -297,7 +341,7 @@ export default function CartScreen (props) {
                 />
                 <View style={cart.btnorderview}>
                   <TouchableOpacity
-                    style={cart.btnPlaceOrderContainer}
+                    style={[cart.btnPlaceOrderContainer,{backgroundColor:'#ef6c00'}]}
                     onPress={continueCheckout}
                   >
                     <Text style={cart.txtPlaceOrder}>

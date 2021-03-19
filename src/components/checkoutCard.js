@@ -4,20 +4,28 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import * as Data from '../data';
 
 export default function CheckOutCard (props) {
   let prodPrice = props.data.price * props.data.prodQuantity;
+  let sellerId = props.data.sellerId;
+  let sellerNameValue = '';
+  for(var i =0;i<Data.sellerName.length;i++){
+    if(Data.sellerName[i].id == sellerId){
+      sellerNameValue = Data.sellerName[i].name;
+    }
+  }
   return (
     <View style={cardStyle.container}>
       <View style={cardStyle.cartContainer}>
         <View style={cardStyle.cartCard}>
           <View style={cardStyle.cartContent}>
             <Text style={cardStyle.prodName}>{props.data.name}</Text>
-            <Text style={cardStyle.sellerName}>Seller : ABC sellers</Text>
+            <Text style={cardStyle.sellerName}>{'Seller : '+sellerNameValue}</Text>
             <Text style={cardStyle.sellerName}>
               {'Quantity :' + props.data.prodQuantity}
             </Text>
-            <Text style={cardStyle.prodPrice}>{'$' + prodPrice}</Text>
+            <Text style={cardStyle.prodPrice}>{'$' + (prodPrice).toFixed(2)}</Text>
 
           </View>
           <View style={cardStyle.cartImageView}>

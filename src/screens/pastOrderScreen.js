@@ -1,22 +1,28 @@
 import React, {useState, useEffect} from 'react';
-import {View, FlatList, TouchableOpacity, Text,StyleSheet,ActivityIndicator} from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import OrderCard from '../components/orderComponent';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import * as Data from '../data';
 
 export default function PastOrderScreen (props) {
   const [orderData, setOrderData] = useState ([]);
   const [isLoading, setLoading] = useState (false);
-  // let orderData = [];
-  // let url = 'shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/orders';
 
   useEffect (
     () => {
       const unsubscribe = props.navigation.addListener ('focus', () => {
-        setLoading (true)
+        setLoading (true);
         const requestOptions = {
           method: 'POST',
           headers: {
@@ -26,7 +32,9 @@ export default function PastOrderScreen (props) {
         };
 
         fetch (
-          'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/orders',
+          'https://shopany-api.herokuapp.com/api/user/' +
+            Data.currentUser[0]._id +
+            '/orders',
           requestOptions
         )
           .then (response => {
@@ -47,7 +55,7 @@ export default function PastOrderScreen (props) {
             // console.error (error)
           })
           .finally (() => {
-            setLoading (false)
+            setLoading (false);
           });
       });
       return unsubscribe;
@@ -57,7 +65,7 @@ export default function PastOrderScreen (props) {
 
   const renderItem = ({item}) => <OrderCard data={item} />;
   if (isLoading) {
-    console.log('past spinner')
+    // console.log('past spinner')
     return (
       <View style={order.activity}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -80,7 +88,7 @@ export default function PastOrderScreen (props) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>
-          There are no Past Orders
+          No past orders
         </Text>
         {/* <Text>Add items in Cart</Text> */}
         <TouchableOpacity

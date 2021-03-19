@@ -8,6 +8,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useNavigation} from '@react-navigation/native';
+import * as Data from '../data'
 
 export default function CartScreen (props) {
   const navigation = useNavigation ();
@@ -29,7 +30,7 @@ export default function CartScreen (props) {
         };
 
         fetch (
-          'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/getCart',
+          'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/getCart',
           requestOptions
         )
           .then (response => {
@@ -42,7 +43,7 @@ export default function CartScreen (props) {
                 tempArray.push (responseData.user[0].cart[i]);
               }
             }
-            console.log('api call success');
+            // console.log('api call success');
             setCartData (tempArray);
           })
           .catch (error => {
@@ -71,7 +72,7 @@ export default function CartScreen (props) {
     };
 
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/addCart',
+      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/addCart',
       requestOptions
     )
       .then (response => {
@@ -105,7 +106,7 @@ export default function CartScreen (props) {
     };
     let rmCartId = data.product._id;
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/removeCart/' +
+      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/removeCart/' +
         rmCartId,
       requestOptions
     )
@@ -142,7 +143,7 @@ export default function CartScreen (props) {
     );
   }
   if (cartData.length > 0) {
-    console.log('render call more 0');
+    // console.log('render call more 0');
     return (
       <View style={{flex: 1}}>
         <SafeAreaView>
@@ -162,7 +163,7 @@ export default function CartScreen (props) {
       </View>
     );
   } else {
-    console.log('render call no data');
+    // console.log('render call no data');
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>

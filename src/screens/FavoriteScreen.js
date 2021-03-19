@@ -20,7 +20,7 @@ export default function FavoriteScreen (props) {
     () => {
       const unsubscribe = props.navigation.addListener ('focus', () => {
         setLoading (true)
-        console.log ('fav useeffect call');
+        // console.log ('fav useeffect call');
         const requestOptions = {
           method: 'POST',
           headers: {
@@ -30,7 +30,7 @@ export default function FavoriteScreen (props) {
         };
 
         fetch (
-          'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/getFavs',
+          'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/getFavs',
           requestOptions
         )
           .then (response => {
@@ -50,7 +50,7 @@ export default function FavoriteScreen (props) {
   );
 
   function removeFav (data) {
-    // console.log (data);
+    console.log (data);
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -60,7 +60,7 @@ export default function FavoriteScreen (props) {
     };
     let rmFavId = data._id;
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/60518967ed36fa05ec9b4ef1/removeFav/' +
+      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/removeFav/' +
         rmFavId,
       requestOptions
     )
@@ -95,6 +95,43 @@ export default function FavoriteScreen (props) {
   }
   function addCart (data) {
     // console.log (data);
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify ({
+        productId: data._id,
+        quantity: 1,
+        cartType: 0,
+      }),
+    };
+
+    fetch (
+      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/addCart',
+      requestOptions
+    )
+      .then (response => {
+        return response.json ();
+      })
+      .then (responseData => {
+        if ((responseData.status = 'sucess')) {
+          setVisible(true);
+          setMessage('Added to Cart');
+          var tempData = favData;
+          for (var i = 0; i < tempData.length; i++) {
+            if (tempData[i]._id == data._id) {
+              tempData.splice (i, 1);
+            }
+          }
+          setFavData (tempData);
+        }
+      })
+      .catch (error => console.error (error))
+      .finally (() => {
+        // setLoading (false)
+      });
   }
   const renderItem = ({item}) => (
     <FavCard data={item} removeFromFav={removeFav} addToCart={addCart} />
@@ -160,6 +197,13 @@ export default function FavoriteScreen (props) {
             <Text style={styles.txtPlaceOrder}>Shop Now</Text>
           </TouchableOpacity>
         </View>
+        <Snackbar
+          visible={visible}
+          duration={2000}
+          onDismiss={() => setVisible (false)}
+        >
+          {snackMessage}
+        </Snackbar>
       </View>
     );
   }

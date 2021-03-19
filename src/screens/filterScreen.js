@@ -127,7 +127,7 @@ export default class FilterScreen extends Component {
         </View>
         <View style={filterStyle.btnorderview}>
           <TouchableOpacity
-            style={filterStyle.btnPlaceOrderContainer}
+            style={[filterStyle.btnPlaceOrderContainer,{backgroundColor:'#78909c'}]}
             onPress={this.resetData}
           >
             <Text style={filterStyle.txtPlaceOrder}>Reset</Text>

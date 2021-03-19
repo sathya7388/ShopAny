@@ -140,7 +140,7 @@ export default class HomeScreen extends Component {
       },
       body: JSON.stringify ({
         fromPrice: 0,
-        toPrice: 3000,
+        toPrice: 3000000,
         category: '',
       }),
     };
