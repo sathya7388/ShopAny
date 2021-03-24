@@ -7,6 +7,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {
   createMaterialBottomTabNavigator,
 } from '@react-navigation/material-bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
   createMaterialTopTabNavigator,
 } from '@react-navigation/material-top-tabs';
@@ -19,7 +20,7 @@ import PastOrderScreen from './pastOrder';
 import CurrentOrderScreen from './currentOrder';
 
 const Stack = createStackNavigator ();
-const Tab = createMaterialBottomTabNavigator ();
+const Tab = createBottomTabNavigator ();
 const TopTab = createMaterialTopTabNavigator ();
 
 const resetHomeStackOnTabPress = ({navigation, route}) => ({
@@ -77,10 +78,34 @@ export default function SellerRoute () {
         headerTitleStyle: {fontWeight: 'bold'},
       }}
     >
-      <Tab.Screen name="ReportScreen" component={ReportScreen} />
-      <Tab.Screen name="CategoryScreen" component={CategoryScreen} />
-      <Tab.Screen name="ProductScreen" component={ProductScreen} />
-      <Tab.Screen name="OrderTopTab" component={OrderTopTab} />
+      <Tab.Screen
+        name="ReportScreen"
+        component={ReportScreen}
+        options={{
+          tabBarLabel: 'Stats',
+        }}
+      />
+      <Tab.Screen
+        name="CategoryScreen"
+        component={ProductScreen}
+        options={{
+          tabBarLabel: 'Products',
+        }}
+      />
+      <Tab.Screen
+        name="ProductScreen"
+        component={CategoryScreen}
+        options={{
+          tabBarLabel: 'Category',
+        }}
+      />
+      <Tab.Screen
+        name="OrderTopTab"
+        component={OrderTopTab}
+        options={{
+          tabBarLabel: 'Order',
+        }}
+      />
     </Tab.Navigator>
   );
 }
