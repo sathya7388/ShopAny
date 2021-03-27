@@ -156,36 +156,38 @@ export default function Category (props) {
       deleteCategory={deleteCat}
     />
   );
-  if (isLoading) {
-    return (
-      <View style={styles.activity}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <View style={styles.activity}>
+  //       <ActivityIndicator size="large" color="#0000ff" />
+  //     </View>
+  //   );
+  // }
   if (categories.length > 0) {
     return (
       <View style={{flex: 1, backgroundColor: '#ffffff'}}>
+        <View style={styles.headerContainer}>
+          <View style={styles.headerCol}>
+            <Text style={styles.appName}>Category Management</Text>
+          </View>
+        </View>
         <SafeAreaView>
-          <FlatList
-            data={categories}
-            renderItem={renderItem}
-            keyExtractor={item => item._id}
-            contentContainerStyle={{
-              flexGrow: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingBottom: 80,
-            }}
-            ListHeaderComponent={
-              <View style={styles.headerContainer}>
-                <View style={styles.headerCol}>
-                  <Text style={styles.appName}>Category Management</Text>
-                </View>
+          {isLoading
+            ? <View style={styles.activity}>
+                <ActivityIndicator size="large" color="#0000ff" />
               </View>
-            }
-            stickyHeaderIndices={[0]}
-          />
+            : <FlatList
+                data={categories}
+                renderItem={renderItem}
+                keyExtractor={item => item._id}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingBottom: 80,
+                }}
+              />}
+
         </SafeAreaView>
         <FAB
           style={styles.fab}
@@ -248,7 +250,7 @@ export default function Category (props) {
           </Text>
         </View>
         <FAB
-          style={[styles.fab,{bottom:50}]}
+          style={[styles.fab, {bottom: 50}]}
           small={false}
           icon="plus"
           onPress={toggleModal}
@@ -322,9 +324,8 @@ const styles = StyleSheet.create ({
   },
   activity: {
     height: hp (100),
-    justifyContent: 'center',
-    alignItems: 'center',
-    // opacity:0.5,
+    marginTop:20,
+    alignItems: 'center',    
   },
   input: {
     borderWidth: 0.3,

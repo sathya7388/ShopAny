@@ -33,7 +33,7 @@ const resetHomeStackOnTabPress = ({navigation, route}) => ({
 
       nonTargetTabs.forEach (tab => {
         // Find the tab we want to reset and grab the key of the nested stack
-        // const stackKey = tab?.state?.key;
+        const stackKey = tab?.state?.key;
 
         if (stackKey) {
           navigation.dispatch ({
@@ -108,6 +108,7 @@ export default function SellerRoute () {
       <Tab.Screen
         name="ReportScreen"
         component={ReportScreen}
+        listeners={resetHomeStackOnTabPress}
         options={{
           tabBarLabel: 'Stats',
         }}
@@ -115,6 +116,7 @@ export default function SellerRoute () {
       <Tab.Screen
         name="ProductScreen"
         component={productStack}
+        listeners={resetHomeStackOnTabPress}
         options={{
           tabBarLabel: 'Products',
         }}
@@ -122,6 +124,7 @@ export default function SellerRoute () {
       <Tab.Screen
         name="CategoryScreen"
         component={CategoryScreen}
+        listeners={resetHomeStackOnTabPress}
         options={{
           tabBarLabel: 'Category',
         }}
@@ -129,6 +132,7 @@ export default function SellerRoute () {
       <Tab.Screen
         name="OrderTopTab"
         component={OrderTopTab}
+        listeners={resetHomeStackOnTabPress}
         options={{
           tabBarLabel: 'Order',
         }}

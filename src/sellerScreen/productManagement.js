@@ -27,6 +27,7 @@ export default function Product (props) {
   const [isLoading, setLoading] = useState (false);
   useEffect (
     () => {
+      setLoading (true);
       const unsubscribe = props.navigation.addListener ('focus', () => {
         setLoading (true);
         const requestOptions = {
@@ -57,51 +58,70 @@ export default function Product (props) {
     },
     [props.navigation]
   );
+  const deleteProduct = function (data) {
+    setLoading (true);
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    };
+    fetch (
+      'https://shopany-api.herokuapp.com/api/product/delete/' + data._id,
+      requestOptions
+    )
+      .then (response => {
+        return response.json ();
+      })
+      .then (responseData => {
+        setProductData (responseData.products);
+      })
+      .catch (error => console.error (error))
+      .finally (() => {
+        setLoading (false);
+      });
+  };
   const addProduct = function () {
     props.navigation.navigate ('UpdateProduct', {prodtDetails: ''});
   };
-  const renderItem = ({item}) => <ProductCard data={item} />;
-  if (isLoading) {
-    return (
-      <View style={styles.activity}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  const renderItem = ({item}) => (
+    <ProductCard data={item} deleteProduct={deleteProduct} />
+  );
+
   if (productData.length > 0) {
     return (
-      <View style={{flex: 1,backgroundColor: '#fff',}}>
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
         <View style={styles.headerContainer}>
           <View style={styles.headerCol}>
             <Text style={styles.appName}>Product Management</Text>
           </View>
         </View>
         <SafeAreaView>
-          <FlatList
-            data={productData}
-            renderItem={renderItem}
-            keyExtractor={item => item._id}
-            contentContainerStyle={{
-              flexGrow: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            // ListHeaderComponent={
-            //   <View style={styles.headerContainer}>
-            //     <View style={styles.headerCol}>
-            //       <Text style={styles.appName}>Product Management</Text>
-            //     </View>
-            //   </View>
-            // }
-            // stickyHeaderIndices={[0]}
-          />
+          {isLoading
+            ? <View style={styles.activity}>
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            : <FlatList
+                data={productData}
+                renderItem={renderItem}
+                keyExtractor={item => item._id}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                // ListHeaderComponent={
+                //   <View style={styles.headerContainer}>
+                //     <View style={styles.headerCol}>
+                //       <Text style={styles.appName}>Product Management</Text>
+                //     </View>
+                //   </View>
+                // }
+                // stickyHeaderIndices={[0]}
+              />}
+
         </SafeAreaView>
-        {/* <FAB
-        style={styles.fab}
-        small={false}
-        icon="plus"
-        onPress={() => console.log ('Pressed')}
-      /> */}
         <Snackbar
           visible={visible}
           duration={2000}
@@ -190,7 +210,8 @@ const styles = StyleSheet.create ({
   },
   activity: {
     height: hp (100),
-    justifyContent: 'center',
+    // justifyContent: 'center',
+    marginTop: 20,
     alignItems: 'center',
   },
 });

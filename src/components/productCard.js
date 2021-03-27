@@ -17,7 +17,7 @@ import Delete from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
 import {useNavigation} from '@react-navigation/native';
 
-export default function ProductCard({data}) {
+export default function ProductCard({data,deleteProduct}) {
   const [textData, settextData] = useState (data.categoryName);
   const [isModalVisible, setModalVisible] = useState (false);
   const navigation = useNavigation ();
@@ -25,9 +25,9 @@ export default function ProductCard({data}) {
     navigation.navigate ('UpdateProduct', {prodtDetails: data});
   };
   // console.log (data.images[0]);
-  //   const deleteCat = function () {
-  //     deleteCategory(data);
-  //   };
+    const deleteCat = function () {
+      deleteProduct(data);
+    };
   const toggleModal = function () {
     setModalVisible (!isModalVisible);
   };
@@ -70,39 +70,13 @@ export default function ProductCard({data}) {
         <TouchableOpacity style={styles.btnContainer}>
           <Delete
             name="delete-outline"
-            // onPress={deleteCat}
+            onPress={deleteCat}
             backgroundColor="#ddd"
             color="black"
             size={22}
           />
         </TouchableOpacity>
       </View>
-      {/* <View style={styles.cardContainer}>
-        <Text>{data.name}</Text>
-        <Text>{data.price}</Text>
-        <Text>{data.quantity}</Text>
-        <Text>{data.deliveryFee}</Text>
-      </View>
-      <View style={styles.iconContainer}>
-        <TouchableOpacity style={styles.touchContainer}>
-          <Edit
-            name="edit"
-            onPress={updateCat}
-            backgroundColor="#ddd"
-            color="black"
-            size={21}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.touchContainer}>
-          <Delete
-            name="delete-outline"
-            // onPress={deleteCat}
-            backgroundColor="#ddd"
-            color="black"
-            size={22}
-          />
-        </TouchableOpacity>
-      </View> */}
     </View>
   );
 }
