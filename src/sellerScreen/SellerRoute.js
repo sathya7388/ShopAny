@@ -16,6 +16,7 @@ import {StackActions} from '@react-navigation/native';
 import CategoryScreen from './categoryManagement';
 import ReportScreen from './ReportScreen';
 import ProductScreen from './productManagement';
+import UpdateProduct from './updateProduct';
 import PastOrderScreen from './pastOrder';
 import CurrentOrderScreen from './currentOrder';
 
@@ -45,6 +46,32 @@ const resetHomeStackOnTabPress = ({navigation, route}) => ({
   },
 });
 
+function productStack () {
+  return (
+    <Stack.Navigator
+      // initialRouteName="Home"
+      screenOptions={{
+        // headerShown: false
+        // headerStyle: {backgroundColor: '#ffffff'},
+        // headerTintColor: '#fff',
+        // headerTitleStyle: {fontWeight: 'bold'},
+      }}
+    >
+      <Stack.Screen
+        name="ProductScreen"
+        component={ProductScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="UpdateProduct"
+        component={UpdateProduct}
+        options={{title: 'Product Detail'}}
+      />
+    </Stack.Navigator>
+  );
+}
 function OrderTopTab () {
   return (
     <TopTab.Navigator>
@@ -86,14 +113,14 @@ export default function SellerRoute () {
         }}
       />
       <Tab.Screen
-        name="CategoryScreen"
-        component={ProductScreen}
+        name="ProductScreen"
+        component={productStack}
         options={{
           tabBarLabel: 'Products',
         }}
       />
       <Tab.Screen
-        name="ProductScreen"
+        name="CategoryScreen"
         component={CategoryScreen}
         options={{
           tabBarLabel: 'Category',

@@ -1,31 +1,167 @@
-import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import FavCard from '../components/favCard';
+import {useNavigation} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {Snackbar} from 'react-native-paper';
 import {FAB} from 'react-native-paper';
+import ProductCard from '../components/productCard';
+import * as Data from '../data';
 
-export default function ProductManagement () {
-  return (
-    <View>
+export default function Product (props) {
+  const navigation = useNavigation ();
+  const [productData, setProductData] = useState ([]);
+  const [visible, setVisible] = useState (false);
+  const [snackMessage, setMessage] = useState ('');
+  const [isLoading, setLoading] = useState (false);
+  useEffect (
+    () => {
+      const unsubscribe = props.navigation.addListener ('focus', () => {
+        setLoading (true);
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        };
+        fetch (
+          'https://shopany-api.herokuapp.com/api/seller/' +
+            Data.currentUser[0]._id +
+            '/products',
+          requestOptions
+        )
+          .then (response => {
+            return response.json ();
+          })
+          .then (responseData => {
+            setProductData (responseData.products);
+          })
+          .catch (error => console.error (error))
+          .finally (() => {
+            setLoading (false);
+          });
+      });
+      return unsubscribe;
+    },
+    [props.navigation]
+  );
+  const addProduct = function () {
+    props.navigation.navigate ('UpdateProduct', {prodtDetails: ''});
+  };
+  const renderItem = ({item}) => <ProductCard data={item} />;
+  if (isLoading) {
+    return (
+      <View style={styles.activity}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+  if (productData.length > 0) {
+    return (
+      <View style={{flex: 1,backgroundColor: '#fff',}}>
+        <View style={styles.headerContainer}>
+          <View style={styles.headerCol}>
+            <Text style={styles.appName}>Product Management</Text>
+          </View>
+        </View>
+        <SafeAreaView>
+          <FlatList
+            data={productData}
+            renderItem={renderItem}
+            keyExtractor={item => item._id}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            // ListHeaderComponent={
+            //   <View style={styles.headerContainer}>
+            //     <View style={styles.headerCol}>
+            //       <Text style={styles.appName}>Product Management</Text>
+            //     </View>
+            //   </View>
+            // }
+            // stickyHeaderIndices={[0]}
+          />
+        </SafeAreaView>
+        {/* <FAB
+        style={styles.fab}
+        small={false}
+        icon="plus"
+        onPress={() => console.log ('Pressed')}
+      /> */}
+        <Snackbar
+          visible={visible}
+          duration={2000}
+          onDismiss={() => setVisible (false)}
+        >
+          {snackMessage}
+        </Snackbar>
+        <FAB
+          style={styles.fab}
+          small={false}
+          icon="plus"
+          onPress={addProduct}
+        />
+      </View>
+    );
+  } else {
+    return (
       <View style={styles.Container}>
         <View style={styles.headerContainer}>
           <View style={styles.headerCol}>
             <Text style={styles.appName}>Product Management</Text>
           </View>
         </View>
-      </View>
-      <FAB
+
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+
+          <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>
+            Product is empty!
+          </Text>
+          {/* <Text>Add items to Favorites</Text> */}
+          {/* <TouchableOpacity
+            style={styles.shopNow}
+            onPress={() => navigation.navigate ('HomeScreen')}
+          >
+            <Text style={styles.txtPlaceOrder}>Shop Now</Text>
+          </TouchableOpacity> */}
+        </View>
+        {/* <FAB
         style={styles.fab}
         small={false}
         icon="plus"
         onPress={() => console.log ('Pressed')}
-      />
-    </View>
-  );
+      /> */}
+        <Snackbar
+          visible={visible}
+          duration={2000}
+          onDismiss={() => setVisible (false)}
+        >
+          {snackMessage}
+        </Snackbar>
+        <FAB
+          style={[styles.fab, {bottom: 50}]}
+          small={false}
+          icon="plus"
+          onPress={addProduct}
+        />
+      </View>
+    );
+  }
 }
-
 const styles = StyleSheet.create ({
   Container: {
     flexDirection: 'column',
@@ -50,6 +186,11 @@ const styles = StyleSheet.create ({
     position: 'absolute',
     margin: 16,
     right: 0,
-    bottom: 60,
+    bottom: 0,
+  },
+  activity: {
+    height: hp (100),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

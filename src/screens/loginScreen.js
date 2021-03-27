@@ -9,8 +9,6 @@ import {
 import {Snackbar} from 'react-native-paper';
 import * as Data from '../data';
 
-//import HorizontalPicker from 'react-native-horizontal-picker';
-
 function loginScreen({navigation}) {
   const [visible, setVisible] = useState (false);
   const [data1, setData] = useState ({
@@ -18,7 +16,6 @@ function loginScreen({navigation}) {
     password: '',
   });
   function validateLogin () {
-    // console.log('sign in pressed**************');
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -37,19 +34,19 @@ function loginScreen({navigation}) {
       })
       .then (responseData => {
         if (responseData.status == 'success' && responseData.user.length != 0) {
-          //console.log(responseData)
           Data.currentUser.splice (
             0,
             Data.currentUser.length,
             responseData.user[0]
           );
-          // console.log('called')
           if (responseData.user[0].userType == 1) {
             navigation.navigate ('RouteScreen');
           } else {
             navigation.navigate ('SellerScreen');
           }
           // console.log('Navigate to home screen')
+        }else{
+          setVisible(true);
         }
       })
       .catch (error => {
@@ -70,7 +67,6 @@ function loginScreen({navigation}) {
         style={styles.logo}
         source={require ('../assets/images/shopAnyLogo.png')}
       />
-      {/* <Text style={styles.text}>Login</Text> */}
       <View>
         <TextInput
           style={styles.input}
@@ -104,7 +100,7 @@ function loginScreen({navigation}) {
         duration={2000}
         onDismiss={() => setVisible (false)}
       >
-        Login Failed
+        Incorrect Username or Password
       </Snackbar>
     </View>
   );
@@ -114,7 +110,6 @@ const styles = StyleSheet.create ({
   body: {
     backgroundColor: '#5AB568',
     flex: 1,
-    //justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
@@ -126,14 +121,12 @@ const styles = StyleSheet.create ({
     marginBottom: 20,
   },
   input: {
-    // backgroundColor: '#f2faf4',
     padding: 5,
     width: wp (80),
     marginVertical: 20,
     height: hp (6),
-    // marginTop: 10,
+    
     fontSize: 18,
-    // marginBottom: 20,
   },
   logo: {
     width: 270,
@@ -144,7 +137,6 @@ const styles = StyleSheet.create ({
     alignItems: 'center',
     width: 150,
     color: 'white',
-    //marginTop:10,
     padding: 5,
     backgroundColor: '#064f19',
   },

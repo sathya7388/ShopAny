@@ -20,7 +20,6 @@ export default function FavoriteScreen (props) {
     () => {
       const unsubscribe = props.navigation.addListener ('focus', () => {
         setLoading (true)
-        // console.log ('fav useeffect call');
         const requestOptions = {
           method: 'POST',
           headers: {
@@ -77,7 +76,6 @@ export default function FavoriteScreen (props) {
               tempData.splice (i, 1);
             }
           }
-          // console.log(tempData);
           setFavData (tempData);
         } else {
           setVisible (true);
@@ -94,7 +92,6 @@ export default function FavoriteScreen (props) {
       });
   }
   function addCart (data) {
-    // console.log (data);
     const requestOptions = {
       method: 'POST',
       headers: {
