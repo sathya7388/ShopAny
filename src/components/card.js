@@ -18,10 +18,7 @@ export default function homeCard (props) {
         navigation.navigate ('DetailScreen', {productData: props.data})}
     >
       <View style={cardStyle.card}>
-        <Image
-          source={{uri: props.data.images[0]}}
-          style={cardStyle.image}
-        />
+        <Image source={{uri: props.data.images[0]}} style={cardStyle.image} />
         <View style={cardStyle.lineStyle} />
         <View style={cardStyle.vendorRow}>
           <Text style={{fontSize: 13, fontWeight: 'bold'}}>
@@ -30,11 +27,10 @@ export default function homeCard (props) {
         </View>
         <View style={cardStyle.vendorRow}>
           <Text style={{fontSize: 10}}>{'$' + props.data.price}</Text>
-          {/* <Text style={{fontSize: 10}}>{' . ' + props.data.category}</Text> */}
         </View>
         <View style={cardStyle.ratingStyle}>
           <Text style={cardStyle.ratingValueStyle}>
-            {(props.data.rating).toFixed(1)}
+            {props.data.rating.toFixed (1)}
           </Text>
         </View>
       </View>
@@ -91,6 +87,5 @@ const cardStyle = StyleSheet.create ({
   lineStyle: {
     backgroundColor: '#E0E0E0',
     height: 1,
-    // marginHorizontal: 10,
   },
 });

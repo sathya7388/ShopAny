@@ -22,8 +22,8 @@ export default function CartCard({
 
   let sellerId = data.product.sellerId;
   let sellerNameValue = '';
-  for(var i =0;i<Data.sellerName.length;i++){
-    if(Data.sellerName[i].id == sellerId){
+  for (var i = 0; i < Data.sellerName.length; i++) {
+    if (Data.sellerName[i].id == sellerId) {
       sellerNameValue = Data.sellerName[i].name;
     }
   }
@@ -67,7 +67,7 @@ export default function CartCard({
           <View style={cardStyle.cartContent}>
             <Text style={cardStyle.prodName}>{data.product.name}</Text>
             <Text style={cardStyle.sellerName}>
-              {'Seller : '+sellerNameValue}
+              {'Seller : ' + sellerNameValue}
             </Text>
             <Text style={cardStyle.prodPrice}>
               {'$' + prodPrice.toFixed (2)}
@@ -117,7 +117,10 @@ export default function CartCard({
             <Text style={cardStyle.txtPlaceOrder}>Save for Later</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[cardStyle.btnPlaceOrderContainer,{backgroundColor:'#78909c'}]}
+            style={[
+              cardStyle.btnPlaceOrderContainer,
+              {backgroundColor: '#78909c'},
+            ]}
             onPress={() => {
               onRemoveCart (data);
             }}
@@ -126,7 +129,6 @@ export default function CartCard({
           </TouchableOpacity>
         </View>
       </View>
-
     </View>
   );
 }
@@ -142,7 +144,6 @@ const cardStyle = StyleSheet.create ({
     flexDirection: 'column',
     backgroundColor: '#fff',
     borderRadius: 8,
-    // elevation: 5,
   },
   cartCard: {
     flexDirection: 'row',
@@ -205,7 +206,7 @@ const cardStyle = StyleSheet.create ({
     borderRadius: 8,
   },
   btnPlaceOrderContainer: {
-    marginRight:10,
+    marginRight: 10,
     elevation: 8,
     backgroundColor: '#009688',
     borderRadius: 2,

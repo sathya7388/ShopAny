@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, Image, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
   widthPercentageToDP as wp,
@@ -13,15 +13,14 @@ export default function SaveForLaterCard({data, onRemoveCart, onMoveCart}) {
   const [minusdisabled, setMinusDisabled] = useState (true);
   const [plusdisabled, setPlusDisabled] = useState (false);
   const productPrice = parseFloat (data.product.price);
-  
+
   let sellerId = data.product.sellerId;
   let sellerNameValue = '';
-  for(var i =0;i<Data.sellerName.length;i++){
-    if(Data.sellerName[i].id == sellerId){
+  for (var i = 0; i < Data.sellerName.length; i++) {
+    if (Data.sellerName[i].id == sellerId) {
       sellerNameValue = Data.sellerName[i].name;
     }
   }
-
 
   useEffect (
     () => {
@@ -54,7 +53,7 @@ export default function SaveForLaterCard({data, onRemoveCart, onMoveCart}) {
           <View style={cardStyle.cartContent}>
             <Text style={cardStyle.prodName}>{data.product.name}</Text>
             <Text style={cardStyle.sellerName}>
-            {'Seller : '+sellerNameValue}
+              {'Seller : ' + sellerNameValue}
             </Text>
             <Text style={cardStyle.prodPrice}>
               {'$' + prodPrice.toFixed (2)}
@@ -106,12 +105,15 @@ export default function SaveForLaterCard({data, onRemoveCart, onMoveCart}) {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[cardStyle.btnPlaceOrderContainer,{backgroundColor:'#78909c'}]}
+            style={[
+              cardStyle.btnPlaceOrderContainer,
+              {backgroundColor: '#78909c'},
+            ]}
             onPress={() => {
               onRemoveCart (data);
             }}
           >
-              <Text style={cardStyle.txtPlaceOrder}>Remove</Text>
+            <Text style={cardStyle.txtPlaceOrder}>Remove</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -192,7 +194,7 @@ const cardStyle = StyleSheet.create ({
     borderRadius: 8,
   },
   btnPlaceOrderContainer: {
-    marginRight:10,
+    marginRight: 10,
     elevation: 8,
     backgroundColor: '#009688',
     borderRadius: 2,

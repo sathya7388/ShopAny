@@ -22,7 +22,6 @@ export default function CheckoutScreen (props) {
   const [modalVisible, setModalVisible] = useState (false);
   let productdata = [];
   productdata = props.route.params.productData;
-  // console.log (props.route.params.screenName);
   let totalprice = 0, productPrice = 0, deliveryFee = 0, discount = 0;
 
   for (var i = 0; i < productdata.length; i++) {
@@ -64,12 +63,11 @@ export default function CheckoutScreen (props) {
       productMap.product = productdata[i]._id;
       productMap.sellerId = productdata[i].sellerId;
       productMap.placedDate = formatDate (new Date ());
-      var date = new Date (); // Get current Date
+      var date = new Date ();
       date.setDate (date.getDate () + productdata[i].expectedDeliveryDate);
       productMap.deliveryDate = formatDate (new Date (date));
       orderArray.push (productMap);
     }
-    // console.log (orderArray);
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -173,11 +171,6 @@ export default function CheckoutScreen (props) {
               <Text style={checkoutStyle.addressData}>
                 {Data.currentUser[0].address}
               </Text>
-              {/* <Text style={checkoutStyle.addressData}>
-                221, Mammoth Hall Dr
-              </Text>
-              <Text style={checkoutStyle.addressData}>Scarborough, ON</Text>
-              <Text style={checkoutStyle.addressData}>M1K 1B6</Text> */}
             </View>
             <Text
               style={{
@@ -244,7 +237,10 @@ export default function CheckoutScreen (props) {
             />
             <View style={checkoutStyle.btnorderview}>
               <TouchableOpacity
-                style={[checkoutStyle.btnPlaceOrderContainer,{backgroundColor:'#ef6c00'}]}
+                style={[
+                  checkoutStyle.btnPlaceOrderContainer,
+                  {backgroundColor: '#ef6c00'},
+                ]}
                 onPress={placeOrder}
               >
                 <Text style={checkoutStyle.txtPlaceOrder}>

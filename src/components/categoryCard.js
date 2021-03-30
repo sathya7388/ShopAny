@@ -3,11 +3,9 @@ import {
   View,
   TextInput,
   Text,
-  Image,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-// import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -16,14 +14,14 @@ import Edit from 'react-native-vector-icons/AntDesign';
 import Delete from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
 
-export default function CategoryCard({data,updateCategory,deleteCategory}) {
+export default function CategoryCard({data, updateCategory, deleteCategory}) {
   const [textData, settextData] = useState (data.categoryName);
   const [isModalVisible, setModalVisible] = useState (false);
   const updateCat = function () {
     toggleModal ();
   };
   const deleteCat = function () {
-    deleteCategory(data);
+    deleteCategory (data);
   };
   const toggleModal = function () {
     setModalVisible (!isModalVisible);
@@ -31,7 +29,7 @@ export default function CategoryCard({data,updateCategory,deleteCategory}) {
   const saveName = function () {
     var tempData = data;
     tempData.categoryName = textData;
-    updateCategory(tempData)
+    updateCategory (tempData);
     setModalVisible (!isModalVisible);
   };
   return (

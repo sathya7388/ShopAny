@@ -1,8 +1,5 @@
 import 'react-native-gesture-handler';
-
 import React from 'react';
-import {Image} from 'react-native';
-
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   createMaterialBottomTabNavigator,
@@ -24,7 +21,7 @@ const Stack = createStackNavigator ();
 const Tab = createBottomTabNavigator ();
 const TopTab = createMaterialTopTabNavigator ();
 
-const resetHomeStackOnTabPress = ({navigation, route}) => ({
+const resetHomeStackOnTabPress = ({navigation}) => ({
   tabPress: e => {
     const state = navigation.dangerouslyGetState ();
 
@@ -32,9 +29,7 @@ const resetHomeStackOnTabPress = ({navigation, route}) => ({
       const nonTargetTabs = state.routes.filter (r => r.key !== e.target);
 
       nonTargetTabs.forEach (tab => {
-        // Find the tab we want to reset and grab the key of the nested stack
         const stackKey = tab?.state?.key;
-
         if (stackKey) {
           navigation.dispatch ({
             ...StackActions.popToTop (),
@@ -48,15 +43,7 @@ const resetHomeStackOnTabPress = ({navigation, route}) => ({
 
 function productStack () {
   return (
-    <Stack.Navigator
-      // initialRouteName="Home"
-      screenOptions={{
-        // headerShown: false
-        // headerStyle: {backgroundColor: '#ffffff'},
-        // headerTintColor: '#fff',
-        // headerTitleStyle: {fontWeight: 'bold'},
-      }}
-    >
+    <Stack.Navigator>
       <Stack.Screen
         name="ProductScreen"
         component={ProductScreen}

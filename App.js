@@ -4,52 +4,14 @@ import React from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {
-  createMaterialTopTabNavigator,
-} from '@react-navigation/material-top-tabs';
-
 import LoginScreen from './src/screens/loginScreen';
 import SignUpScreen from './src/screens/signUpScreen';
 import RouteScreen from './src/screens/routeScreen';
 import SellerScreen from './src/sellerScreen/SellerRoute';
 
-import * as Data from './src/data';
-
 const Stack = createStackNavigator ();
 
 class App extends React.Component {
-  constructor (props) {
-    super (props);
-
-    this.state = {
-      userLoggedIn: false,
-      userType: 2,
-    };
-  }
-  componentDidMount () {
-    if (Data.currentUser.length == 0) {
-      this.setState ({
-        userLoggedIn: false,
-      });
-    } else {
-      this.setState ({
-        userLoggedIn: true,
-        userType: Data.currentUser.userType,
-      });
-    }
-  }
-  // updateUserState () {
-  //   console.log ('call back');
-  //   if (Data.currentUser.length == 0) {
-  //     this.setState ({userLoggedIn: false});
-  //   } else {
-  //     this.setState ({userLoggedIn: true});
-  //   }
-  // }
-
-  //  {this.state.userLoggedIn == true ? :}
-
   render () {
     return (
       <NavigationContainer>

@@ -12,17 +12,13 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import FavCard from '../components/favCard';
-import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Snackbar} from 'react-native-paper';
 import {FAB} from 'react-native-paper';
 import CategoryCard from '../components/categoryCard';
 import Modal from 'react-native-modal';
-import * as Data from '../data';
 
 export default function Category (props) {
-  const navigation = useNavigation ();
   const [categories, setCategoryData] = useState ([]);
   const [visible, setVisible] = useState (false);
   const [snackMessage, setMessage] = useState ('');
@@ -156,13 +152,7 @@ export default function Category (props) {
       deleteCategory={deleteCat}
     />
   );
-  // if (isLoading) {
-  //   return (
-  //     <View style={styles.activity}>
-  //       <ActivityIndicator size="large" color="#0000ff" />
-  //     </View>
-  //   );
-  // }
+
   if (categories.length > 0) {
     return (
       <View style={{flex: 1, backgroundColor: '#ffffff'}}>
@@ -324,8 +314,8 @@ const styles = StyleSheet.create ({
   },
   activity: {
     height: hp (100),
-    marginTop:20,
-    alignItems: 'center',    
+    marginTop: 20,
+    alignItems: 'center',
   },
   input: {
     borderWidth: 0.3,

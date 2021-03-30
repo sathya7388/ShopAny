@@ -7,7 +7,6 @@ import {
   View,
   ScrollView,
   FlatList,
-  Pressable,
   ActivityIndicator,
 } from 'react-native';
 import {
@@ -94,7 +93,9 @@ export default function UpdateProduct (props) {
             setName (props.route.params.prodtDetails.name);
             setQty (props.route.params.prodtDetails.quantity.toString ());
             setPrice (props.route.params.prodtDetails.price.toString ());
-            setExpDelivery(props.route.params.prodtDetails.expectedDeliveryDate.toString ());
+            setExpDelivery (
+              props.route.params.prodtDetails.expectedDeliveryDate.toString ()
+            );
             setDeliveryFee (
               props.route.params.prodtDetails.deliveryFee.toString ()
             );
@@ -136,7 +137,7 @@ export default function UpdateProduct (props) {
     } else {
       url = 'https://shopany-api.herokuapp.com/api/product/add';
       saveObj.sellerId = Data.currentUser[0]._id;
-      saveObj.rating = ((Math.random() * 4) + 1).toFixed(1);
+      saveObj.rating = (Math.random () * 4 + 1).toFixed (1);
     }
     const requestOptions = {
       method: 'POST',
@@ -361,7 +362,7 @@ const styles = StyleSheet.create ({
   },
   activity: {
     height: hp (100),
-    justifyContent: 'center',
+    marginTop: 20,
     alignItems: 'center',
   },
   imageContainer: {

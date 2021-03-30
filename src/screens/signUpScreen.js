@@ -4,13 +4,10 @@ import {
   View,
   Text,
   Pressable,
-  // TextInput,
   Image,
-  TouchableOpacity,
-  ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import {TextInput} from 'react-native-paper';
 
 import {
   widthPercentageToDP as wp,
@@ -32,7 +29,6 @@ function signUpScreen({navigation}) {
   });
 
   function createUser () {
-    // console.log(data1)
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -65,9 +61,7 @@ function signUpScreen({navigation}) {
 
   return (
     <ScrollView>
-      <View>
-        
-      </View>
+      <View />
       <View style={styles.body}>
         <Image
           style={styles.logo}
@@ -149,8 +143,7 @@ const styles = StyleSheet.create ({
   body: {
     backgroundColor: '#5AB568',
     flex: 1,
-    //justifyContent: 'center',
-    height:hp(100),
+    height: hp (100),
     alignItems: 'center',
   },
   text: {
@@ -163,9 +156,9 @@ const styles = StyleSheet.create ({
   },
   input: {
     padding: 5,
-    width:wp(80),
-    marginVertical:10,
-    height: hp(6),
+    width: wp (80),
+    marginVertical: 10,
+    height: hp (6),
     fontSize: 15,
   },
   logo: {
@@ -177,7 +170,6 @@ const styles = StyleSheet.create ({
     alignItems: 'center',
     width: 150,
     color: 'white',
-    //marginTop:10,
     padding: 5,
     backgroundColor: '#064f19',
   },

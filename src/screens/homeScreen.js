@@ -12,13 +12,12 @@ import {
 } from 'react-native';
 import {Avatar} from 'react-native-elements';
 import Card from '../components/card';
+import * as Data from '../data';
 
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-
-import _ from 'lodash';
 
 export default class HomeScreen extends Component {
   _isMounted = false;
@@ -36,11 +35,14 @@ export default class HomeScreen extends Component {
       fromPrice: '',
       toPrice: '',
       sortBy: '',
+      avatarTitle: '',
     };
   }
   componentDidMount () {
     const unsubscribe = this.props.navigation.addListener ('focus', () => {
       this.makeRemoteRequest ();
+      var title = Data.currentUser[0].name.charAt (0).toUpperCase ();
+      this.setState ({avatarTitle: title});
     });
     return unsubscribe;
   }
@@ -171,7 +173,8 @@ export default class HomeScreen extends Component {
       })
       .catch (err => {
         console.log ('fetch error' + err);
-      }).finally (() => {
+      })
+      .finally (() => {
         this.setState ({loading: false});
       });
   };
@@ -188,72 +191,64 @@ export default class HomeScreen extends Component {
   };
   render () {
     const renderItem = ({item}) => <Card data={item} />;
-    if (this.state.loading) {
-      return (
-        <View style={styles.activity}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      );
-    }
     return (
       <SafeAreaView style={styles.safeView}>
-        <FlatList
-          data={this.state.data}
-          renderItem={renderItem}
-          keyExtractor={item => item._id}
-          numColumns={2}
-          ListHeaderComponent={this.searchHeader}
-        />
+        <View style={styles.headerContainer}>
+          <Text style={styles.appName}>ShopAny</Text>
+          <TextInput
+            style={styles.searchBar}
+            onChangeText={this.searchHandler}
+            placeholder="Search"
+            clearButtonMode="always"
+          />
+          <TouchableOpacity
+            onPress={() =>
+              this.props.navigation.navigate ('FilterScreen', {
+                filter: {
+                  category: this.state.filterCategory,
+                  fromPrice: this.state.fromPrice,
+                  toPrice: this.state.toPrice,
+                  sortBy: this.state.sortBy,
+                },
+              })}
+          >
+            <Image
+              source={require ('../assets/images/filter.png')}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Avatar
+            size="small"
+            rounded
+            title={this.state.avatarTitle}
+            containerStyle={{backgroundColor: 'gray'}}
+            onPress={() => this.props.navigation.navigate ('ProfileScreen')}
+          />
+        </View>
+        {this.state.loading
+          ? <View style={styles.activity}>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          : <FlatList
+              data={this.state.data}
+              renderItem={renderItem}
+              keyExtractor={item => item._id}
+              numColumns={2}
+            />}
       </SafeAreaView>
     );
   }
-
-  searchHeader = () => {
-    return (
-      <View style={styles.headerContainer}>
-        <Text style={styles.appName}>ShopAny</Text>
-        <TextInput
-          style={styles.searchBar}
-          onChangeText={this.searchHandler}
-          placeholder="Search"
-          clearButtonMode="always"
-        />
-        <TouchableOpacity
-          onPress={() =>
-            this.props.navigation.navigate ('FilterScreen', {
-              filter: {
-                category: this.state.filterCategory,
-                fromPrice: this.state.fromPrice,
-                toPrice: this.state.toPrice,
-                sortBy: this.state.sortBy,
-              },
-            })}
-        >
-          <Image
-            source={require ('../assets/images/filter.png')}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <Avatar
-          size="small"
-          rounded
-          title="MT"
-          containerStyle={{backgroundColor: 'gray'}}
-          onPress={() => this.props.navigation.navigate ('ProfileScreen')}
-        />
-      </View>
-    );
-  };
 }
 const styles = StyleSheet.create ({
   activity: {
     height: hp (100),
-    justifyContent: 'center',
+    marginTop: 20,
     alignItems: 'center',
   },
-  safeView:{
+  safeView: {
     backgroundColor: '#ffffff',
-    height: hp (100),
+    height: hp (95),
+    paddingBottom:hp(2),
   },
   headerContainer: {
     flexDirection: 'row',

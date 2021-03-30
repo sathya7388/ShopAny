@@ -52,7 +52,6 @@ export default class DetailScreen extends Component {
   checkOutCall = () => {
     var productObj = this.state.productData[0];
     productObj.prodQuantity = parseInt (this.state.quantityData);
-    // console.log (productObj);
     var prodData = [productObj];
     this.props.navigation.navigate ('CheckoutScreen', {
       productData: prodData,
@@ -85,7 +84,6 @@ export default class DetailScreen extends Component {
             this.setState ({isFavorite: false});
           }
         }
-        // setFavData (responseData.products);
       })
       .catch (error => console.error (error))
       .finally (() => {
@@ -134,16 +132,14 @@ export default class DetailScreen extends Component {
   updateFav = () => {
     let url = '';
     if (this.state.isFavorite) {
-      //remove
-      // this.setState ({isFavorite: false});
+      //remove from Fav
       url =
         'https://shopany-api.herokuapp.com/api/user/' +
         Data.currentUser[0]._id +
         '/removeFav/' +
         this.state.productData[0]._id;
     } else {
-      //add
-      // this.setState ({isFavorite: true});
+      //add to Fav
       url =
         'https://shopany-api.herokuapp.com/api/user/' +
         Data.currentUser[0]._id +
@@ -328,26 +324,15 @@ export default class DetailScreen extends Component {
             <Text style={styles.txtPlaceOrder}>Add to Cart</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.btnPlaceOrderContainer, {backgroundColor: '#ef6c00'}]}
+            style={[
+              styles.btnPlaceOrderContainer,
+              {backgroundColor: '#ef6c00'},
+            ]}
             onPress={this.checkOutCall}
           >
             <Text style={styles.txtPlaceOrder}>Buy Now</Text>
           </TouchableOpacity>
         </View>
-
-        {/* <View style={styles.btnView}>
-          <View style={styles.btn}>
-            <Button
-              title="Add to Cart"
-              raised={true}
-              onPress={this.addToCart}
-            />
-          </View>
-          <View style={[styles.btn, {backgroundColor: '#ef6c00'}]}>
-            <Button title="Buy Now" raised={true} onPress={this.checkOutCall} />
-          </View>
-        </View> */}
-
         <Snackbar
           visible={this.state.snackVisible}
           duration={2000}
@@ -414,9 +399,9 @@ const styles = StyleSheet.create ({
     borderRadius: 8,
   },
   btnPlaceOrderContainer: {
-    alignItems:'center',
+    alignItems: 'center',
     justifyContent: 'center',
-    marginRight:10,
+    marginRight: 10,
     elevation: 8,
     backgroundColor: '#009688',
     borderRadius: 4,
@@ -424,7 +409,7 @@ const styles = StyleSheet.create ({
     paddingHorizontal: 30,
     marginHorizontal: 20,
     width: wp (40),
-    height:hp(5),
+    height: hp (5),
   },
   txtPlaceOrder: {
     fontSize: 14,

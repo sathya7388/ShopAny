@@ -10,8 +10,8 @@ export default function CheckOutCard (props) {
   let prodPrice = props.data.price * props.data.prodQuantity;
   let sellerId = props.data.sellerId;
   let sellerNameValue = '';
-  for(var i =0;i<Data.sellerName.length;i++){
-    if(Data.sellerName[i].id == sellerId){
+  for (var i = 0; i < Data.sellerName.length; i++) {
+    if (Data.sellerName[i].id == sellerId) {
       sellerNameValue = Data.sellerName[i].name;
     }
   }
@@ -21,11 +21,15 @@ export default function CheckOutCard (props) {
         <View style={cardStyle.cartCard}>
           <View style={cardStyle.cartContent}>
             <Text style={cardStyle.prodName}>{props.data.name}</Text>
-            <Text style={cardStyle.sellerName}>{'Seller : '+sellerNameValue}</Text>
+            <Text style={cardStyle.sellerName}>
+              {'Seller : ' + sellerNameValue}
+            </Text>
             <Text style={cardStyle.sellerName}>
               {'Quantity :' + props.data.prodQuantity}
             </Text>
-            <Text style={cardStyle.prodPrice}>{'$' + (prodPrice).toFixed(2)}</Text>
+            <Text style={cardStyle.prodPrice}>
+              {'$' + prodPrice.toFixed (2)}
+            </Text>
 
           </View>
           <View style={cardStyle.cartImageView}>
@@ -39,7 +43,9 @@ export default function CheckOutCard (props) {
         <View style={cardStyle.delivery}>
           <Text style={cardStyle.sellerName}>Canada Post</Text>
           <Text style={cardStyle.sellerName}>
-            {'This item will be delivered in '+props.data.expectedDeliveryDate+' days'}
+            {'This item will be delivered in ' +
+              props.data.expectedDeliveryDate +
+              ' days'}
           </Text>
         </View>
       </View>
@@ -68,7 +74,7 @@ const cardStyle = StyleSheet.create ({
     shadowColor: '#333',
     shadowOpacity: 0.3,
   },
-  cardColumn:{
+  cardColumn: {
     flexDirection: 'column',
   },
   cartContent: {

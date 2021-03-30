@@ -7,7 +7,6 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 export default class FilterScreen extends Component {
-
   constructor (props) {
     super (props);
     this.state = {
@@ -44,7 +43,7 @@ export default class FilterScreen extends Component {
     };
   }
   componentDidMount () {
-    this.setState({
+    this.setState ({
       value: this.props.route.params.filter.sortBy,
       fromPrice: this.props.route.params.filter.fromPrice,
       toPrice: this.props.route.params.filter.toPrice,
@@ -53,14 +52,14 @@ export default class FilterScreen extends Component {
   }
 
   resetData = () => {
-    this.setState({
+    this.setState ({
       value: 'noPreference',
       fromPrice: '',
       toPrice: '',
       categoryData: '0',
-    })
+    });
   };
-  
+
   render () {
     return (
       <View style={{flex: 1, flexDirection: 'column', backgroundColor: '#fff'}}>
@@ -75,7 +74,7 @@ export default class FilterScreen extends Component {
               justifyContent: 'flex-start',
             }}
             dropDownStyle={{backgroundColor: '#fafafa'}}
-            onChangeItem={item => this.setState({ categoryData: item.value })}
+            onChangeItem={item => this.setState ({categoryData: item.value})}
           />
           <Text style={filterStyle.componentTitle}>Price</Text>
           <TextInput
@@ -89,7 +88,7 @@ export default class FilterScreen extends Component {
               width: wp (90),
               height: hp (5),
             }}
-            onChangeText={text => this.setState({ fromPrice: text })}
+            onChangeText={text => this.setState ({fromPrice: text})}
             value={this.state.fromPrice}
           />
           <TextInput
@@ -104,13 +103,13 @@ export default class FilterScreen extends Component {
               width: wp (90),
               height: hp (5),
             }}
-            onChangeText={text => this.setState({ toPrice: text })}
+            onChangeText={text => this.setState ({toPrice: text})}
             value={this.state.toPrice}
           />
           <Text style={filterStyle.componentTitle}>SortBy</Text>
           <View style={{flexDirection: 'row'}}>
             <RadioButton.Group
-              onValueChange={newValue => this.setState({ value: newValue })}
+              onValueChange={newValue => this.setState ({value: newValue})}
               value={this.state.value}
             >
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -127,14 +126,25 @@ export default class FilterScreen extends Component {
         </View>
         <View style={filterStyle.btnorderview}>
           <TouchableOpacity
-            style={[filterStyle.btnPlaceOrderContainer,{backgroundColor:'#78909c'}]}
+            style={[
+              filterStyle.btnPlaceOrderContainer,
+              {backgroundColor: '#78909c'},
+            ]}
             onPress={this.resetData}
           >
             <Text style={filterStyle.txtPlaceOrder}>Reset</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={filterStyle.btnPlaceOrderContainer}
-            onPress={() => this.props.navigation.navigate ('HomeScreen', {filter: {'category': this.state.categoryData, 'fromPrice':this.state.fromPrice, 'toPrice': this.state.toPrice, 'sortBy': this.state.value}})}
+            onPress={() =>
+              this.props.navigation.navigate ('HomeScreen', {
+                filter: {
+                  category: this.state.categoryData,
+                  fromPrice: this.state.fromPrice,
+                  toPrice: this.state.toPrice,
+                  sortBy: this.state.value,
+                },
+              })}
           >
             <Text style={filterStyle.txtPlaceOrder}>Apply</Text>
           </TouchableOpacity>

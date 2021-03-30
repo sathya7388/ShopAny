@@ -1,6 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-// import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -9,7 +8,6 @@ import {AirbnbRating} from 'react-native-ratings';
 
 export default function FavCard({data, removeFromFav, addToCart}) {
   const removeFav = function () {
-    // console.log('card remove')
     removeFromFav (data);
   };
   const addCart = function () {
@@ -19,10 +17,7 @@ export default function FavCard({data, removeFromFav, addToCart}) {
     <View style={favStyle.container}>
       <View style={favStyle.prodRow}>
         <View style={favStyle.prodCol}>
-          <Image
-            source={{uri: data.images[0]}}
-            style={favStyle.orderImage}
-          />
+          <Image source={{uri: data.images[0]}} style={favStyle.orderImage} />
         </View>
         <View style={favStyle.prodCol}>
           <Text numberOfLines={4} style={favStyle.lblProdName}>

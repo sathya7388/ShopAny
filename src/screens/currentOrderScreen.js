@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, FlatList, TouchableOpacity, Text, StyleSheet,ActivityIndicator} from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 
 import OrderCard from '../components/orderComponent';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -7,7 +14,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import * as Data from '../data'
+import * as Data from '../data';
 
 export default function CurrentOrderScreen (props) {
   const [orderData, setOrderData] = useState ([]);
@@ -15,7 +22,7 @@ export default function CurrentOrderScreen (props) {
   useEffect (
     () => {
       const unsubscribe = props.navigation.addListener ('focus', () => {
-        setLoading (true)
+        setLoading (true);
         const requestOptions = {
           method: 'POST',
           headers: {
@@ -25,7 +32,9 @@ export default function CurrentOrderScreen (props) {
         };
 
         fetch (
-          'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/orders',
+          'https://shopany-api.herokuapp.com/api/user/' +
+            Data.currentUser[0]._id +
+            '/orders',
           requestOptions
         )
           .then (response => {
@@ -40,13 +49,12 @@ export default function CurrentOrderScreen (props) {
             }
 
             setOrderData (tempArray);
-            // console.log(tempArray);
           })
           .catch (error => {
-            // console.error (error)
+            console.error (error);
           })
           .finally (() => {
-            setLoading (false)
+            setLoading (false);
           });
       });
       return unsubscribe;
@@ -80,7 +88,6 @@ export default function CurrentOrderScreen (props) {
         <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>
           No active orders
         </Text>
-        {/* <Text>Add items in Cart</Text> */}
         <TouchableOpacity
           style={order.shopNow}
           onPress={() => navigation.navigate ('HomeScreen')}
@@ -95,7 +102,7 @@ export default function CurrentOrderScreen (props) {
 const order = StyleSheet.create ({
   activity: {
     height: hp (100),
-    justifyContent: 'center',
+    marginTop: 20,
     alignItems: 'center',
   },
   shopNow: {

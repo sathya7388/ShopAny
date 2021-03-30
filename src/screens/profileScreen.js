@@ -9,8 +9,8 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import * as Data from '../data'
 
 function Profile({navigation}) {
+  var title = Data.currentUser[0].name.charAt(0).toUpperCase();;
   function logOut(){
-    // console.log('log out')
     Data.currentUser.splice(Data.currentUser.length)
     navigation.navigate('Login');
   }
@@ -21,7 +21,7 @@ function Profile({navigation}) {
         <Avatar
           size="xlarge"
           rounded
-          title="MT"
+          title={title}
           containerStyle={{backgroundColor: 'gray'}}
 
         />
@@ -61,8 +61,6 @@ function Profile({navigation}) {
           </View>
           <View style={styles.tableCol}>
             <Text>{Data.currentUser[0].address}</Text>
-            {/* <Text>Mark Antony</Text>
-            <Text>Mark Antony</Text> */}
           </View>
         </View>
       </View>
@@ -85,7 +83,6 @@ const styles = StyleSheet.create ({
   avatarView: {
     alignItems: 'center',
     marginTop: 20,
-    // justifyContent: 'center',
   },
   lineStyle: {
     backgroundColor: '#E0E0E0',
@@ -95,11 +92,8 @@ const styles = StyleSheet.create ({
   tlineStyle: {
     backgroundColor: '#E0E0E0',
     height: 0.5,
-    // marginVertical: 20,
   },
   btnView: {
-    // bottom: 100,
-    // position:'absolute',
     flexDirection: 'row',
     justifyContent: 'center',
   },
@@ -137,13 +131,11 @@ const styles = StyleSheet.create ({
     alignItems:'flex-start'
   },
   text: {
-    // fontStyle: 15,
     color: '#818181',
     fontWeight: 'bold',
     marginLeft: 10,
   },
   logout: {
-    // fontStyle: 15,
     color: 'white',
     fontWeight: 'bold',
     marginLeft: 14,

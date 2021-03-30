@@ -48,11 +48,10 @@ export default function OrderCard (props) {
     deliveryDate.getDate () +
     ',' +
     deliveryDate.getFullYear ();
-  // console.log (dateValue);
   let sellerId = props.data.sellerId;
   let sellerNameValue = '';
-  console.log(sellerId);
-  console.log(props.data);
+  console.log (sellerId);
+  console.log (props.data);
   for (var i = 0; i < Data.sellerName.length; i++) {
     if (Data.sellerName[i].id == sellerId) {
       sellerNameValue = Data.sellerName[i].name;

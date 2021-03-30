@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {FlatList, View, StyleSheet, TouchableOpacity, Text,ActivityIndicator} from 'react-native';
+import {
+  FlatList,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LaterCard from '../components/saveForLaterCard';
 import {Snackbar} from 'react-native-paper';
@@ -8,7 +15,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useNavigation} from '@react-navigation/native';
-import * as Data from '../data'
+import * as Data from '../data';
 
 export default function CartScreen (props) {
   const navigation = useNavigation ();
@@ -20,7 +27,7 @@ export default function CartScreen (props) {
   useEffect (
     () => {
       const unsubscribe = props.navigation.addListener ('focus', () => {
-        setLoading (true)
+        setLoading (true);
         const requestOptions = {
           method: 'POST',
           headers: {
@@ -30,7 +37,9 @@ export default function CartScreen (props) {
         };
 
         fetch (
-          'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/getCart',
+          'https://shopany-api.herokuapp.com/api/user/' +
+            Data.currentUser[0]._id +
+            '/getCart',
           requestOptions
         )
           .then (response => {
@@ -43,14 +52,13 @@ export default function CartScreen (props) {
                 tempArray.push (responseData.user[0].cart[i]);
               }
             }
-            // console.log('api call success');
             setCartData (tempArray);
           })
           .catch (error => {
-            // console.error (error)
+            console.error (error);
           })
           .finally (() => {
-            setLoading (false)
+            setLoading (false);
           });
       });
       return unsubscribe;
@@ -72,7 +80,9 @@ export default function CartScreen (props) {
     };
 
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/addCart',
+      'https://shopany-api.herokuapp.com/api/user/' +
+        Data.currentUser[0]._id +
+        '/addCart',
       requestOptions
     )
       .then (response => {
@@ -106,7 +116,9 @@ export default function CartScreen (props) {
     };
     let rmCartId = data.product._id;
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/removeCart/' +
+      'https://shopany-api.herokuapp.com/api/user/' +
+        Data.currentUser[0]._id +
+        '/removeCart/' +
         rmCartId,
       requestOptions
     )
@@ -135,7 +147,6 @@ export default function CartScreen (props) {
     <LaterCard data={item} onRemoveCart={removeCart} onMoveCart={moveCart} />
   );
   if (isLoading) {
-    // console.log('past spinner')
     return (
       <View style={cart.activity}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -143,7 +154,6 @@ export default function CartScreen (props) {
     );
   }
   if (cartData.length > 0) {
-    // console.log('render call more 0');
     return (
       <View style={{flex: 1}}>
         <SafeAreaView>
@@ -163,7 +173,6 @@ export default function CartScreen (props) {
       </View>
     );
   } else {
-    // console.log('render call no data');
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>
@@ -191,7 +200,7 @@ export default function CartScreen (props) {
 const cart = StyleSheet.create ({
   activity: {
     height: hp (100),
-    justifyContent: 'center',
+    marginTop: 20,
     alignItems: 'center',
   },
   shopNow: {

@@ -4,15 +4,12 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import FavCard from '../components/favCard';
-import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Snackbar} from 'react-native-paper';
 import {FAB} from 'react-native-paper';
@@ -20,14 +17,13 @@ import ProductCard from '../components/productCard';
 import * as Data from '../data';
 
 export default function Product (props) {
-  const navigation = useNavigation ();
   const [productData, setProductData] = useState ([]);
   const [visible, setVisible] = useState (false);
   const [snackMessage, setMessage] = useState ('');
   const [isLoading, setLoading] = useState (false);
   useEffect (
     () => {
-      setLoading (true);
+      // setLoading (true);
       const unsubscribe = props.navigation.addListener ('focus', () => {
         setLoading (true);
         const requestOptions = {
@@ -111,14 +107,6 @@ export default function Product (props) {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                // ListHeaderComponent={
-                //   <View style={styles.headerContainer}>
-                //     <View style={styles.headerCol}>
-                //       <Text style={styles.appName}>Product Management</Text>
-                //     </View>
-                //   </View>
-                // }
-                // stickyHeaderIndices={[0]}
               />}
 
         </SafeAreaView>
@@ -151,20 +139,7 @@ export default function Product (props) {
           <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>
             Product is empty!
           </Text>
-          {/* <Text>Add items to Favorites</Text> */}
-          {/* <TouchableOpacity
-            style={styles.shopNow}
-            onPress={() => navigation.navigate ('HomeScreen')}
-          >
-            <Text style={styles.txtPlaceOrder}>Shop Now</Text>
-          </TouchableOpacity> */}
         </View>
-        {/* <FAB
-        style={styles.fab}
-        small={false}
-        icon="plus"
-        onPress={() => console.log ('Pressed')}
-      /> */}
         <Snackbar
           visible={visible}
           duration={2000}
@@ -210,7 +185,6 @@ const styles = StyleSheet.create ({
   },
   activity: {
     height: hp (100),
-    // justifyContent: 'center',
     marginTop: 20,
     alignItems: 'center',
   },

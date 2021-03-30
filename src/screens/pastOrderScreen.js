@@ -49,10 +49,9 @@ export default function PastOrderScreen (props) {
             }
 
             setOrderData (tempArray);
-            // console.log(tempArray);
           })
           .catch (error => {
-            // console.error (error)
+            console.error (error);
           })
           .finally (() => {
             setLoading (false);
@@ -65,7 +64,6 @@ export default function PastOrderScreen (props) {
 
   const renderItem = ({item}) => <OrderCard data={item} />;
   if (isLoading) {
-    // console.log('past spinner')
     return (
       <View style={order.activity}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -90,7 +88,6 @@ export default function PastOrderScreen (props) {
         <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>
           No past orders
         </Text>
-        {/* <Text>Add items in Cart</Text> */}
         <TouchableOpacity
           style={order.shopNow}
           onPress={() => navigation.navigate ('HomeScreen')}
@@ -105,7 +102,7 @@ export default function PastOrderScreen (props) {
 const order = StyleSheet.create ({
   activity: {
     height: hp (100),
-    justifyContent: 'center',
+    marginTop: 20,
     alignItems: 'center',
   },
   shopNow: {

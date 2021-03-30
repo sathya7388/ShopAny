@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList, TouchableOpacity,ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -18,8 +25,9 @@ export default function FavoriteScreen (props) {
   const [isLoading, setLoading] = useState (false);
   useEffect (
     () => {
+      setLoading (true);
       const unsubscribe = props.navigation.addListener ('focus', () => {
-        setLoading (true)
+        setLoading (true);
         const requestOptions = {
           method: 'POST',
           headers: {
@@ -29,7 +37,9 @@ export default function FavoriteScreen (props) {
         };
 
         fetch (
-          'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/getFavs',
+          'https://shopany-api.herokuapp.com/api/user/' +
+            Data.currentUser[0]._id +
+            '/getFavs',
           requestOptions
         )
           .then (response => {
@@ -40,9 +50,10 @@ export default function FavoriteScreen (props) {
           })
           .catch (error => console.error (error))
           .finally (() => {
-            setLoading (false)
+            setLoading (false);
           });
       });
+      setLoading (false);
       return unsubscribe;
     },
     [props.navigation]
@@ -59,7 +70,9 @@ export default function FavoriteScreen (props) {
     };
     let rmFavId = data._id;
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/removeFav/' +
+      'https://shopany-api.herokuapp.com/api/user/' +
+        Data.currentUser[0]._id +
+        '/removeFav/' +
         rmFavId,
       requestOptions
     )
@@ -106,7 +119,9 @@ export default function FavoriteScreen (props) {
     };
 
     fetch (
-      'https://shopany-api.herokuapp.com/api/user/'+Data.currentUser[0]._id+'/addCart',
+      'https://shopany-api.herokuapp.com/api/user/' +
+        Data.currentUser[0]._id +
+        '/addCart',
       requestOptions
     )
       .then (response => {
@@ -114,8 +129,8 @@ export default function FavoriteScreen (props) {
       })
       .then (responseData => {
         if ((responseData.status = 'sucess')) {
-          setVisible(true);
-          setMessage('Added to Cart');
+          setVisible (true);
+          setMessage ('Added to Cart');
           var tempData = favData;
           for (var i = 0; i < tempData.length; i++) {
             if (tempData[i]._id == data._id) {
@@ -133,35 +148,30 @@ export default function FavoriteScreen (props) {
   const renderItem = ({item}) => (
     <FavCard data={item} removeFromFav={removeFav} addToCart={addCart} />
   );
-  if (isLoading) {
-    return (
-      <View style={styles.activity}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+
   if (favData.length > 0) {
     return (
       <View style={{flex: 1}}>
+        <View style={styles.headerContainer}>
+          <View style={styles.headerCol}>
+            <Text style={styles.appName}>Favorites</Text>
+          </View>
+        </View>
         <SafeAreaView>
-          <FlatList
-            data={favData}
-            renderItem={renderItem}
-            keyExtractor={item => item._id}
-            contentContainerStyle={{
-              flexGrow: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            ListHeaderComponent={
-              <View style={styles.headerContainer}>
-                <View style={styles.headerCol}>
-                  <Text style={styles.appName}>Favorites</Text>
-                </View>
+          {isLoading
+            ? <View style={styles.activity}>
+                <ActivityIndicator size="large" color="#0000ff" />
               </View>
-            }
-            stickyHeaderIndices={[0]}
-          />
+            : <FlatList
+                data={favData}
+                renderItem={renderItem}
+                keyExtractor={item => item._id}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              />}
         </SafeAreaView>
         <Snackbar
           visible={visible}
@@ -180,9 +190,7 @@ export default function FavoriteScreen (props) {
             <Text style={styles.appName}>Favorites</Text>
           </View>
         </View>
-
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-
           <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>
             Favorites is empty!
           </Text>
@@ -241,7 +249,7 @@ const styles = StyleSheet.create ({
   },
   activity: {
     height: hp (100),
-    justifyContent: 'center',
+    marginTop: 20,
     alignItems: 'center',
   },
 });
