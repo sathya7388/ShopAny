@@ -55,7 +55,7 @@ export default function Product (props) {
     [props.navigation]
   );
   const deleteProduct = function (data) {
-    setLoading (true);
+    // setLoading (true);
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -71,6 +71,8 @@ export default function Product (props) {
         return response.json ();
       })
       .then (responseData => {
+        setVisible(true);
+        setMessage('Product Deleted')
         setProductData (responseData.products);
       })
       .catch (error => console.error (error))

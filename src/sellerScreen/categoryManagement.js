@@ -82,6 +82,8 @@ export default function Category (props) {
       })
       .then (responseData => {
         if (responseData.status == 'success') {
+          setVisible (true);
+          setMessage ('Category Updated');
           setCategoryData (responseData.categories);
         }
       })
@@ -108,6 +110,8 @@ export default function Category (props) {
       })
       .then (responseData => {
         if (responseData.status == 'success') {
+          setVisible (true);
+          setMessage ('Category Deleted');
           setCategoryData (responseData.categories);
         }
       })
@@ -117,7 +121,7 @@ export default function Category (props) {
       });
   }
   function addCategory () {
-    toggleModal ();
+    // toggleModal ();
     setLoading (true);
     const requestOptions = {
       method: 'POST',
@@ -137,6 +141,8 @@ export default function Category (props) {
         if (responseData.status == 'success') {
           setCategoryData (responseData.categories);
           settextData ('');
+          // setVisible (true);
+          // setMessage ('Category Added');
         }
       })
       .catch (error => console.error (error))
@@ -174,7 +180,7 @@ export default function Category (props) {
                   flexGrow: 1,
                   justifyContent: 'center',
                   alignItems: 'center',
-                  paddingBottom: 80,
+                  paddingBottom: 120,
                 }}
               />}
 
@@ -199,7 +205,10 @@ export default function Category (props) {
             <View style={{flexDirection: 'row'}}>
               <TouchableOpacity
                 style={[styles.modalContainer, {backgroundColor: '#66bb6a'}]}
-                onPress={addCategory}
+                onPress={() => {
+                  toggleModal ();
+                  setTimeout (addCategory, 500);
+                }}
               >
                 <Text>Add Category</Text>
               </TouchableOpacity>

@@ -31,7 +31,7 @@ export default class HomeScreen extends Component {
       query: '',
       data: [],
       backup: [],
-      filterCategory: '0',
+      filterCategory: 'Select Category',
       fromPrice: '',
       toPrice: '',
       sortBy: '',
@@ -66,7 +66,7 @@ export default class HomeScreen extends Component {
     let tempData = Array.from (products);
     let filterData = [];
 
-    if (this.props.route.params.filter.category == 0) {
+    if (this.props.route.params.filter.category == 'Select Category') {
       return tempData;
     }
 

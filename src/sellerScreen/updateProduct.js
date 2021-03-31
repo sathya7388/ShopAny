@@ -13,24 +13,28 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {TextInput} from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
+import {Dropdown} from 'react-native-material-dropdown-v2';
 import Textarea from 'react-native-textarea';
 import DeleteImage from 'react-native-vector-icons/Ionicons';
 import AddImage from 'react-native-vector-icons/MaterialIcons';
+import {Snackbar, TextInput} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import * as Data from '../data';
+import Modal from 'react-native-modal';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {PermissionsAndroid} from 'react-native';
+import {LogBox} from 'react-native';
+import * as Data from '../data';
 
 export default function UpdateProduct (props) {
+  const [visible, setVisible] = useState (false);
+  const [snackMessage, setMessage] = useState ('');
+  const [isModalVisible, setModalVisible] = useState (false);
+  const toggleModal = function () {
+    setModalVisible (!isModalVisible);
+  };
   const [isLoading, setLoading] = useState (false);
-  const [categories, setCategoryData] = useState ([
-    {
-      label: '',
-      value: '0',
-    },
-  ]);
-  const [selectedCategory, setSelectedCategory] = useState (null);
+  const [categories, setCategoryData] = useState ([{value: 'Select Category'}]);
+  const [selectedCategory, setSelectedCategory] = useState ('Select Category');
   const [pName, setName] = useState ('');
   const [pQty, setQty] = useState ('');
   const [pPrice, setPrice] = useState ('');
@@ -41,9 +45,11 @@ export default function UpdateProduct (props) {
   const [deletedImage, setDeletedImage] = useState ('');
   const [productImage, setProductImage] = useState ([]);
   const [btnSave, setbtnSave] = useState ('');
+  const [imageUrlArray, setImageArray] = useState ([]);
 
   useEffect (() => {
     const unsubscribe = props.navigation.addListener ('focus', () => {
+      LogBox.ignoreLogs (['Animated: `useNativeDriver`']);
       setLoading (true);
       const requestOptions = {
         method: 'POST',
@@ -61,17 +67,14 @@ export default function UpdateProduct (props) {
             var categoryArray = [];
             for (var i = 0; i < responseData.categories.length; i++) {
               var categoryData = {};
-              categoryData.value = responseData.categories[i]._id;
-              categoryData.label = responseData.categories[i].categoryName;
+              categoryData.value = responseData.categories[i].categoryName;
               categoryArray.push (categoryData);
               if (
                 props.route.params.prodtDetails != '' &&
                 responseData.categories[i]._id ==
                   props.route.params.prodtDetails.categoryId
               ) {
-                setSelectedCategory (
-                  props.route.params.prodtDetails.categoryId
-                );
+                setSelectedCategory (responseData.categories[i].categoryName);
               }
             }
             setCategoryData (categoryArray);
@@ -79,6 +82,10 @@ export default function UpdateProduct (props) {
           if (props.route.params.prodtDetails != '') {
             setbtnSave ('Update');
             var tempArray = [];
+            var tempImgArray = Array.from (
+              props.route.params.prodtDetails.images
+            );
+            setImageArray (tempImgArray);
             for (
               var i = 0;
               i < props.route.params.prodtDetails.images.length;
@@ -88,6 +95,7 @@ export default function UpdateProduct (props) {
               tempObj.id = i;
               tempObj.image = props.route.params.prodtDetails.images[i];
               tempArray.push (tempObj);
+              tempImgArray.push = props.route.params.prodtDetails.images[i];
             }
             setProductImage (tempArray);
             setName (props.route.params.prodtDetails.name);
@@ -112,12 +120,50 @@ export default function UpdateProduct (props) {
     });
     return unsubscribe;
   }, []);
+
+  const uploadImage = function (file) {
+    var formdata = new FormData ();
+    formdata.append ('uploadedFile', {
+      uri: file.uri,
+      name: file.fileName,
+      type: file.type,
+    });
+    var requestOptions = {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+      method: 'POST',
+      body: formdata,
+    };
+    fetch ('http://stageed.com/fileUpload.php', requestOptions)
+      .then (response => {
+        return response.json ();
+      })
+      .then (responseData => {
+        if ((responseData.status = 'success')) {
+          let tempArray = Array.from (imageUrlArray);
+          tempArray.push (responseData.path);
+          setImageArray (tempArray);
+
+          var flatListArray = Array.from (productImage);
+          var tempObj = {};
+          tempObj.id = flatListArray.length + 1;
+          tempObj.image = file.uri;
+          flatListArray.push (tempObj);
+          setProductImage (flatListArray);
+        }
+      })
+      .catch (error => {
+        console.log ('********error');
+        console.error (error);
+      })
+      .finally (() => {
+        //setLoading (false);
+      });
+  };
   const saveData = function () {
     var url = '';
-    var tempArray = [];
-    for (var i = 0; i < productImage.length; i++) {
-      tempArray.push (productImage[i].image);
-    }
     var saveObj = {};
     saveObj.name = pName;
     saveObj.description = pDescription;
@@ -126,7 +172,7 @@ export default function UpdateProduct (props) {
     saveObj.deliveryFee = pDeliveryFee;
     saveObj.discount = pDiscount;
     saveObj.expectedDeliveryDate = pExpDelivery;
-    saveObj.images = tempArray;
+    saveObj.images = imageUrlArray;
     saveObj.categoryId = selectedCategory;
 
     if (props.route.params.prodtDetails != '') {
@@ -152,14 +198,24 @@ export default function UpdateProduct (props) {
         return response.json ();
       })
       .then (responseData => {
-        console.log (responseData);
         if ((responseData.status = 'success')) {
           if (props.route.params.prodtDetails != '') {
-            // do nothing
-            // show snack bar
+            // update
+            setVisible (true);
+            setMessage ('Product Updated');
           } else {
-            //clear all data
-            // show snack bar
+            // add
+            setProductImage ([]);
+            setName ('');
+            setQty ('');
+            setPrice ('');
+            setExpDelivery ('');
+            setDeliveryFee ('');
+            setDiscount ('');
+            setDescription ('');
+            setVisible (true);
+            setSelectedCategory (null);
+            setMessage ('Product Added');
           }
         }
       })
@@ -168,17 +224,118 @@ export default function UpdateProduct (props) {
         //setLoading (false);
       });
   };
-  const addImageData = function () {
-    console.log ('add called');
+  const requestCameraPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request (
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'App needs camera permission',
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn (err);
+        return false;
+      }
+    } else return true;
+  };
+
+  const requestExternalWritePermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request (
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'External Storage Write Permission',
+            message: 'App needs write permission',
+          }
+        );
+        // If WRITE_EXTERNAL_STORAGE Permission is granted
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn (err);
+        alert ('Write permission err', err);
+      }
+      return false;
+    } else return true;
+  };
+
+  const captureImage = async () => {
+    let options = {
+      mediaType: 'photo',
+      maxWidth: 300,
+      maxHeight: 550,
+      quality: 1,
+      videoQuality: 'low',
+      durationLimit: 30,
+      saveToPhotos: true,
+    };
+    let isCameraPermitted = await requestCameraPermission ();
+    let isStoragePermitted = await requestExternalWritePermission ();
+    if (isCameraPermitted && isStoragePermitted) {
+      launchCamera (options, response => {
+        toggleModal ();
+        if (response.didCancel) {
+          // alert ('User cancelled camera picker');
+          return;
+        } else if (response.errorCode == 'camera_unavailable') {
+          // alert ('Camera not available on device');
+          return;
+        } else if (response.errorCode == 'permission') {
+          // alert ('Permission not satisfied');
+          return;
+        } else if (response.errorCode == 'others') {
+          // alert (response.errorMessage);
+          return;
+        }
+
+        uploadImage (response);
+      });
+    }
+  };
+
+  const chooseFile = () => {
+    let options = {
+      mediaType: 'photo',
+      maxWidth: 300,
+      maxHeight: 550,
+      quality: 1,
+      includeBase64: true,
+    };
+
+    launchImageLibrary (options, response => {
+      toggleModal ();
+      if (response.didCancel) {
+        // alert ('User cancelled camera picker');
+        return;
+      } else if (response.errorCode == 'camera_unavailable') {
+        // alert ('Camera not available on device');
+        return;
+      } else if (response.errorCode == 'permission') {
+        // alert ('Permission not satisfied');
+        return;
+      } else if (response.errorCode == 'others') {
+        // alert (response.errorMessage);
+        return;
+      }
+      uploadImage (response);
+    });
   };
 
   const deleteImage = function (data) {
-    var tempArray = productImage;
+    var tempArray = Array.from (productImage);
+    var tempUrlArray = Array.from (imageUrlArray);
     for (var i = 0; i < tempArray.length; i++) {
       if (tempArray[i].id == data.id) {
         tempArray.splice (i, 1);
       }
+      if (data.image == tempUrlArray[i]) {
+        tempUrlArray.splice (i, 1);
+      }
     }
+    setImageArray (tempUrlArray);
     setDeletedImage (data.id);
     setProductImage (tempArray);
   };
@@ -189,7 +346,7 @@ export default function UpdateProduct (props) {
         <TouchableOpacity style={styles.addBtn}>
           <AddImage
             name="add-a-photo"
-            onPress={addImageData}
+            onPress={toggleModal}
             backgroundColor="#ddd"
             color="black"
             size={50}
@@ -280,26 +437,6 @@ export default function UpdateProduct (props) {
               onChangeText={setExpDelivery}
               keyboardType="numeric"
             />
-            <DropDownPicker
-              items={categories}
-              placeholder={'Select Category'}
-              defaultValue={selectedCategory}
-              containerStyle={{
-                height: wp (13),
-                borderWidth: 0.7,
-                borderRadius: 5,
-                zIndex: 10,
-              }}
-              style={{backgroundColor: '#fafafa'}}
-              itemStyle={{
-                justifyContent: 'flex-start',
-              }}
-              dropDownStyle={{
-                backgroundColor: '#ddd',
-                zIndex: 10,
-              }}
-              onChangeItem={item => setSelectedCategory (item.value)}
-            />
             <Textarea
               containerStyle={styles.textareaContainer}
               style={styles.textarea}
@@ -310,7 +447,20 @@ export default function UpdateProduct (props) {
               placeholderTextColor={'#c7c7c7'}
               underlineColorAndroid={'transparent'}
             />
-
+            <Dropdown
+              label="Select Category"
+              data={categories}
+              value={selectedCategory}
+              rippleCentered={true}
+              dropdownPosition={1}
+              onChangeText={item => setSelectedCategory (item)}
+              pickerStyle={{
+                width:wp(90),
+                marginHorizontal: 13,
+                borderRadius:8,
+                elevation:8,
+              }}
+            />
           </View>
           <View style={styles.btnorderview}>
             <TouchableOpacity
@@ -332,6 +482,49 @@ export default function UpdateProduct (props) {
             </TouchableOpacity>
           </View>
         </ScrollView>
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={toggleModal}
+          onSwipeComplete={toggleModal}
+        >
+          <View style={styles.modalView}>
+            <View style={{flexDirection: 'column'}}>
+              <TouchableOpacity
+                style={[styles.modalContainer]}
+                onPress={captureImage}
+              >
+                <Text>Take Photo</Text>
+              </TouchableOpacity>
+              <View style={styles.lineStyle} />
+              <TouchableOpacity
+                style={[styles.modalContainer]}
+                onPress={() => {
+                  toggleModal ();
+                  chooseFile ();
+                }}
+              >
+                <Text>Chose From Library</Text>
+              </TouchableOpacity>
+              <View style={styles.lineStyle} />
+              <TouchableOpacity
+                style={styles.modalContainer}
+                onPress={() => {
+                  // settextData ('');
+                  toggleModal ();
+                }}
+              >
+                <Text>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        <Snackbar
+          visible={visible}
+          duration={2000}
+          onDismiss={() => setVisible (false)}
+        >
+          {snackMessage}
+        </Snackbar>
 
       </View>
     );
@@ -420,5 +613,32 @@ const styles = StyleSheet.create ({
     fontSize: 18,
     color: '#fff',
     alignSelf: 'center',
+  },
+  modalView: {
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    // padding: 10,
+    paddingVertical: 15,
+    // paddingHorizontal:10,
+    height: hp (20),
+    width: wp (90),
+    bottom: 0,
+    position: 'absolute',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    alignItems: 'center',
+    // borderRadius: 4,
+    justifyContent: 'center',
+    width: wp (90),
+    height: hp (5),
+    // backgroundColor: '#ddd',
+    // marginHorizontal: 10,
+    marginBottom: 5,
+  },
+  lineStyle: {
+    backgroundColor: '#E0E0E0',
+    height: 1,
+    marginHorizontal: 10,
   },
 });
