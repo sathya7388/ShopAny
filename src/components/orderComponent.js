@@ -48,13 +48,6 @@ export default function OrderCard (props) {
     deliveryDate.getDate () +
     ',' +
     deliveryDate.getFullYear ();
-  let sellerId = props.data.sellerId;
-  let sellerNameValue = '';
-  for (var i = 0; i < Data.sellerName.length; i++) {
-    if (Data.sellerName[i].id == sellerId) {
-      sellerNameValue = Data.sellerName[i].name;
-    }
-  }
   return (
     <View style={orderStyle.container}>
       <View style={orderStyle.prodRow}>

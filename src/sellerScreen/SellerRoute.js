@@ -144,6 +144,20 @@ export default function SellerRoute () {
         listeners={resetHomeStackOnTabPress}
         options={{
           tabBarLabel: 'Products',
+          tabBarIcon: ({focused, size}) => (
+            <Image
+              source={
+                focused
+                  ? require ('../assets/images/product_color.png')
+                  : require ('../assets/images/product_black.png')
+              }
+              style={{
+                width: size,
+                height: size,
+                borderRadius: size,
+              }}
+            />
+          ),
         }}
       />
       <Tab.Screen
@@ -152,6 +166,20 @@ export default function SellerRoute () {
         listeners={resetHomeStackOnTabPress}
         options={{
           tabBarLabel: 'Category',
+          tabBarIcon: ({focused, size}) => (
+            <Image
+              source={
+                focused
+                  ? require ('../assets/images/category_color.png')
+                  : require ('../assets/images/category_black.png')
+              }
+              style={{
+                width: size,
+                height: size,
+                borderRadius: size,
+              }}
+            />
+          ),
         }}
       />
       <Tab.Screen
@@ -164,8 +192,8 @@ export default function SellerRoute () {
             <Image
               source={
                 focused
-                  ? require ('../assets/images/orders-color.png')
-                  : require ('../assets/images/orders-black.png')
+                  ? require ('../assets/images/order_seller_color.png')
+                  : require ('../assets/images/order_seller_black.png')
               }
               style={{
                 width: size,
