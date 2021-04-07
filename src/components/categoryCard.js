@@ -29,8 +29,8 @@ export default function CategoryCard({data, updateCategory, deleteCategory}) {
   const saveName = function () {
     var tempData = data;
     tempData.categoryName = textData;
-    updateCategory (tempData);
     setModalVisible (!isModalVisible);
+    updateCategory (tempData);
   };
   return (
     <View style={styles.container}>
@@ -41,10 +41,11 @@ export default function CategoryCard({data, updateCategory, deleteCategory}) {
       >
         <View style={styles.modalView}>
           <TextInput
-            style={styles.input}
-            onChangeText={settextData}
-            value={textData}
-          />
+              style={styles.input}
+              onChangeText={settextData}
+              value={textData}
+            />
+          
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity
               style={[styles.modalContainer, {backgroundColor: '#66bb6a'}]}

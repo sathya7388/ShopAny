@@ -46,7 +46,6 @@ export default function ReportScreen({navigation}) {
         )
           .then (response => response.json ())
           .then (result => {
-            // console.log(result)
             setData (result);
           })
           .catch (error => console.log ('error', error));
@@ -61,13 +60,14 @@ export default function ReportScreen({navigation}) {
       <View style={styles.headerContainer}>
         <View style={styles.headerCol}>
           <Text style={styles.appName}>Statistics</Text>
-          <View style={{flex:1}}>
+          <View style={{flex: 1}}>
             <Avatar
               size="small"
               rounded
               title={Data.currentUser[0].name.charAt (0).toUpperCase ()}
               containerStyle={{
-                backgroundColor: 'gray',}}
+                backgroundColor: 'gray',
+              }}
               onPress={() => navigation.navigate ('ProfileScreen')}
             />
           </View>
@@ -107,11 +107,11 @@ const styles = StyleSheet.create ({
     alignItems: 'center',
     marginLeft: 20,
     flexDirection: 'row',
-    flex:1,
+    flex: 1,
   },
   appName: {
     fontSize: 23,
     color: '#000000',
-    flex:5,
+    flex: 5,
   },
 });
