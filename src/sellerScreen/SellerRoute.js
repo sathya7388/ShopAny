@@ -1,25 +1,22 @@
 import 'react-native-gesture-handler';
 import React from 'react';
+import {Image} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {
-  createMaterialBottomTabNavigator,
-} from '@react-navigation/material-bottom-tabs';
+
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {
-  createMaterialTopTabNavigator,
-} from '@react-navigation/material-top-tabs';
 import {StackActions} from '@react-navigation/native';
 
 import CategoryScreen from './categoryManagement';
 import ReportScreen from './ReportScreen';
 import ProductScreen from './productManagement';
 import UpdateProduct from './updateProduct';
-import PastOrderScreen from './pastOrder';
-import CurrentOrderScreen from './currentOrder';
+import OrderManagementScreen from './orderManagementScreen';
+import UpdateOrderScreen from './updateOrderScreen';
+import ProfileScreen from '../screens/profileScreen';
+import ChartIcon from 'react-native-vector-icons/EvilIcons';
 
 const Stack = createStackNavigator ();
 const Tab = createBottomTabNavigator ();
-const TopTab = createMaterialTopTabNavigator ();
 
 const resetHomeStackOnTabPress = ({navigation}) => ({
   tabPress: e => {
@@ -59,26 +56,60 @@ function productStack () {
     </Stack.Navigator>
   );
 }
-function OrderTopTab () {
+function orderStack () {
   return (
-    <TopTab.Navigator>
-      <TopTab.Screen
-        name="Pending Order"
-        component={CurrentOrderScreen}
+    <Stack.Navigator
+      // initialRouteName="Home"
+      screenOptions={{
+        // headerShown: false
+        // headerStyle: {backgroundColor: '#ffffff'},
+        // headerTintColor: '#fff',
+        // headerTitleStyle: {fontWeight: 'bold'},
+      }}
+    >
+      <Stack.Screen
+        name="OrderManagementScreen"
+        component={OrderManagementScreen}
         options={{
-          tabBarLabel: 'Pending Order',
+          headerShown: false
         }}
       />
-      <TopTab.Screen
-        name="Past Order"
-        component={PastOrderScreen}
-        options={{
-          tabBarLabel: 'Past Order',
-        }}
+      <Stack.Screen
+        name="UpdateOrder"
+        component={UpdateOrderScreen}
+        options={{title: 'Update Order'}}
       />
-    </TopTab.Navigator>
+    </Stack.Navigator>
   );
 }
+
+function statsStack(){
+  return(
+    <Stack.Navigator
+      // initialRouteName="Home"
+      screenOptions={{
+        // headerShown: false
+        // headerStyle: {backgroundColor: '#ffffff'},
+        // headerTintColor: '#fff',
+        // headerTitleStyle: {fontWeight: 'bold'},
+      }}
+    >
+      <Stack.Screen
+        name="ReportScreen"
+        component={ReportScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{title: 'Account'}}
+      />
+    </Stack.Navigator>
+  )
+}
+
 
 export default function SellerRoute () {
   return (
@@ -93,11 +124,18 @@ export default function SellerRoute () {
       }}
     >
       <Tab.Screen
-        name="ReportScreen"
-        component={ReportScreen}
+        name="statsStack"
+        component={statsStack}
         listeners={resetHomeStackOnTabPress}
         options={{
           tabBarLabel: 'Stats',
+          tabBarIcon: ({focused,size}) => (
+            <ChartIcon
+              name="chart"
+              color={focused ? '#009688': 'black'}
+              size={35}
+            />
+          ),
         }}
       />
       <Tab.Screen
@@ -117,11 +155,25 @@ export default function SellerRoute () {
         }}
       />
       <Tab.Screen
-        name="OrderTopTab"
-        component={OrderTopTab}
+        name="orderStack"
+        component={orderStack}
         listeners={resetHomeStackOnTabPress}
         options={{
           tabBarLabel: 'Order',
+          tabBarIcon: ({focused, size}) => (
+            <Image
+              source={
+                focused
+                  ? require ('../assets/images/orders-color.png')
+                  : require ('../assets/images/orders-black.png')
+              }
+              style={{
+                width: size,
+                height: size,
+                borderRadius: size,
+              }}
+            />
+          ),
         }}
       />
     </Tab.Navigator>

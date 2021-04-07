@@ -1,6 +1,14 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, Pressable, Image} from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Pressable,
+  Image,
+  TextInput,
+  StatusBar,
+} from 'react-native';
+// import {TextInput} from 'react-native-paper';
 
 import {
   widthPercentageToDP as wp,
@@ -8,8 +16,10 @@ import {
 } from 'react-native-responsive-screen';
 import {Snackbar} from 'react-native-paper';
 import * as Data from '../data';
+import {LogBox} from 'react-native';
 
 function loginScreen({navigation}) {
+  LogBox.ignoreAllLogs ();
   const [visible, setVisible] = useState (false);
   const [data1, setData] = useState ({
     email: '',
@@ -44,13 +54,13 @@ function loginScreen({navigation}) {
           } else {
             navigation.navigate ('SellerScreen');
           }
-          // console.log('Navigate to home screen')
-        }else{
-          setVisible(true);
+        } else {
+          setVisible (true);
         }
       })
       .catch (error => {
-        console.log ('fail');
+        setVisible (true);
+        console.log (error);
       })
       .finally (() => {
         // setLoading(false)
@@ -62,38 +72,48 @@ function loginScreen({navigation}) {
   };
 
   return (
-    <View style={styles.body}>
-      <Image
-        style={styles.logo}
-        source={require ('../assets/images/shopAnyLogo.png')}
-      />
-      <View>
-        <TextInput
-          style={styles.input}
-          label="Email"
-          name="email"
-          onChangeText={text => setData ({...data1, email: text})}
-          value={data1.email}
-        />
-        <TextInput
-          style={styles.input}
-          secureTextEntry={true}
-          label="Password"
-          name="password"
-          onChangeText={text => setData ({...data1, password: text})}
-          value={data1.password}
-        />
+    <View style={styles.container}>
+      <StatusBar animated={true} backgroundColor="#00897b" hidden={false} />
+      <View style={styles.contTop}>
+        <View style={styles.contBBtm}>
+          <Image
+            style={styles.logo}
+            source={require ('../assets/images/shopAnyLogo.png')}
+          />
+        </View>
       </View>
-      <Pressable style={styles.button} onPress={validateLogin}>
-        <Text style={styles.buttonText}>Log In</Text>
-      </Pressable>
-      <View style={styles.statement}>
-        <Pressable onPress={onPressHandler}>
-          <Text style={styles.line}>
-            New User?
-            <Text style={styles.register}> Sign Up</Text>
-          </Text>
-        </Pressable>
+      <View style={styles.contBtm}>
+        <View style={styles.contTBtm}>
+          <View style={styles.textContainer}>
+            <View
+              style={{alignItems: 'center', justifyContent: 'center', flex: 1}}
+            >
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                onChangeText={text => setData ({...data1, email: text})}
+              />
+              <TextInput
+                style={styles.input}
+                secureTextEntry={true}
+                placeholder="Password"
+                onChangeText={text => setData ({...data1, password: text})}
+              />
+              <Pressable style={styles.button} onPress={validateLogin}>
+                <Text style={styles.buttonText}>Log In</Text>
+              </Pressable>
+              <View style={styles.statement}>
+                <Pressable onPress={onPressHandler}>
+                  <Text style={styles.line}>
+                    New User?
+                    <Text style={styles.register}> Sign Up</Text>
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+
+          </View>
+        </View>
       </View>
       <Snackbar
         visible={visible}
@@ -107,38 +127,62 @@ function loginScreen({navigation}) {
 }
 
 const styles = StyleSheet.create ({
-  body: {
-    backgroundColor: '#5AB568',
+  container: {
+    height: hp (100),
     flex: 1,
+  },
+  contTop: {
+    backgroundColor: '#e1f5fe',
+    height: hp (25),
+    width: wp (100),
+  },
+  contBBtm: {
+    width: wp (100),
+    backgroundColor: '#81c784',
+    height: hp (25),
+    borderBottomLeftRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contBtm: {
+    backgroundColor: '#81c784',
+    height: hp (75),
+    width: wp (100),
+  },
+  contTBtm: {
+    backgroundColor: '#e1f5fe',
+    borderTopRightRadius: 40,
+    width: wp (100),
+    height: hp (75),
     alignItems: 'center',
   },
-  text: {
-    marginTop: -40,
-    color: 'white',
-    fontSize: 30,
-    textDecorationLine: 'underline',
-    fontWeight: 'bold',
-    marginBottom: 20,
+  textContainer: {
+    backgroundColor: '#fff',
+    width: wp (90),
+    height: hp (50),
+    margin: 30,
+    borderRadius: 20,
+    elevation: 8,
+    alignItems: 'center',
   },
   input: {
-    padding: 5,
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingLeft: 20,
     width: wp (80),
-    marginVertical: 20,
-    height: hp (6),
-    
-    fontSize: 18,
+    marginVertical: 10,
   },
   logo: {
     width: 270,
     height: 170,
   },
   button: {
+    marginTop: 10,
     borderRadius: 5,
     alignItems: 'center',
-    width: 150,
-    color: 'white',
+    width: wp (50),
     padding: 5,
-    backgroundColor: '#064f19',
+    backgroundColor: '#81c784',
   },
   buttonText: {
     color: 'white',
@@ -150,34 +194,12 @@ const styles = StyleSheet.create ({
     marginTop: 20,
   },
   register: {
-    color: '#f2faf4',
-    fontSize: 18,
+    // color: '#f2faf4',
+    fontSize: 22,
     fontWeight: 'bold',
   },
   line: {
-    fontSize: 18,
-  },
-  btnorderview: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    paddingVertical: 10,
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  btnPlaceOrderContainer: {
-    elevation: 8,
-    backgroundColor: '#064f19',
-    borderRadius: 2,
-    paddingVertical: 4,
-    paddingHorizontal: 30,
-    color: 'white',
-    marginHorizontal: 20,
-    width: wp (40),
-  },
-  items: {
-    fontSize: 18,
-    color: 'white',
-    alignSelf: 'center',
+    fontSize: 14,
   },
 });
 export default loginScreen;

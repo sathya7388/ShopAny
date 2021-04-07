@@ -60,7 +60,6 @@ export default function FavoriteScreen (props) {
   );
 
   function removeFav (data) {
-    console.log (data);
     const requestOptions = {
       method: 'POST',
       headers: {

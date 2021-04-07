@@ -21,7 +21,7 @@ export default function homeCard (props) {
         <Image source={{uri: props.data.images[0]}} style={cardStyle.image} />
         <View style={cardStyle.lineStyle} />
         <View style={cardStyle.vendorRow}>
-          <Text style={{fontSize: 13, fontWeight: 'bold'}}>
+          <Text style={{fontSize: 13, fontWeight: 'bold'}} numberOfLines={1}>
             {props.data.name}
           </Text>
         </View>

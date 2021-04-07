@@ -8,6 +8,7 @@ import {
   ScrollView,
   FlatList,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -17,13 +18,15 @@ import {Dropdown} from 'react-native-material-dropdown-v2';
 import Textarea from 'react-native-textarea';
 import DeleteImage from 'react-native-vector-icons/Ionicons';
 import AddImage from 'react-native-vector-icons/MaterialIcons';
-import {Snackbar, TextInput} from 'react-native-paper';
+import {Snackbar} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Modal from 'react-native-modal';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {PermissionsAndroid} from 'react-native';
 import {LogBox} from 'react-native';
 import * as Data from '../data';
+
+import {OutlinedTextField} from '@softmedialab/react-native-material-textfield';
 
 export default function UpdateProduct (props) {
   const [visible, setVisible] = useState (false);
@@ -34,7 +37,9 @@ export default function UpdateProduct (props) {
   };
   const [isLoading, setLoading] = useState (false);
   const [categories, setCategoryData] = useState ([{value: 'Select Category'}]);
+  const [categoryKeyData, setcategoryKeyData] = useState ([]);
   const [selectedCategory, setSelectedCategory] = useState ('Select Category');
+  const [selectedCategoryId, setSelectedCategoryId] = useState ('');
   const [pName, setName] = useState ('');
   const [pQty, setQty] = useState ('');
   const [pPrice, setPrice] = useState ('');
@@ -49,6 +54,7 @@ export default function UpdateProduct (props) {
 
   useEffect (() => {
     const unsubscribe = props.navigation.addListener ('focus', () => {
+      LogBox.ignoreAllLogs ();
       LogBox.ignoreLogs (['Animated: `useNativeDriver`']);
       setLoading (true);
       const requestOptions = {
@@ -65,10 +71,15 @@ export default function UpdateProduct (props) {
         .then (responseData => {
           if (responseData.status == 'success') {
             var categoryArray = [];
+            var categoryKeyValue = [];
             for (var i = 0; i < responseData.categories.length; i++) {
               var categoryData = {};
+              var catKeyObj = {};
               categoryData.value = responseData.categories[i].categoryName;
               categoryArray.push (categoryData);
+              catKeyObj.value = responseData.categories[i].categoryName;
+              catKeyObj.id = responseData.categories[i]._id;
+              categoryKeyValue.push (catKeyObj);
               if (
                 props.route.params.prodtDetails != '' &&
                 responseData.categories[i]._id ==
@@ -77,6 +88,7 @@ export default function UpdateProduct (props) {
                 setSelectedCategory (responseData.categories[i].categoryName);
               }
             }
+            setcategoryKeyData (categoryKeyValue);
             setCategoryData (categoryArray);
           }
           if (props.route.params.prodtDetails != '') {
@@ -155,7 +167,6 @@ export default function UpdateProduct (props) {
         }
       })
       .catch (error => {
-        console.log ('********error');
         console.error (error);
       })
       .finally (() => {
@@ -173,7 +184,7 @@ export default function UpdateProduct (props) {
     saveObj.discount = pDiscount;
     saveObj.expectedDeliveryDate = pExpDelivery;
     saveObj.images = imageUrlArray;
-    saveObj.categoryId = selectedCategory;
+    saveObj.categoryId = selectedCategoryId;
 
     if (props.route.params.prodtDetails != '') {
       url =
@@ -323,7 +334,13 @@ export default function UpdateProduct (props) {
       uploadImage (response);
     });
   };
-
+  const selectComboId = function (item) {
+    for (var i = 0; i < categoryKeyData.length; i++) {
+      if (item == categoryKeyData[i].value) {
+        setSelectedCategoryId (categoryKeyData[i].id);
+      }
+    }
+  };
   const deleteImage = function (data) {
     var tempArray = Array.from (productImage);
     var tempUrlArray = Array.from (imageUrlArray);
@@ -391,51 +408,64 @@ export default function UpdateProduct (props) {
               ListHeaderComponent={addImage}
             />
           </SafeAreaView>
+          <View style={styles.toplineStyle} />
           <View style={styles.container}>
-
-            <TextInput
+            <Dropdown
+              label="Select Category"
+              data={categories}
+              value={selectedCategory}
+              rippleCentered={true}
+              dropdownPosition={0.5}
+              itemCount={10}
+              onChangeText={item => {
+                selectComboId (item);
+                setSelectedCategory (item);
+              }}
+              pickerStyle={{
+                width: wp (90),
+                marginHorizontal: 13,
+                borderRadius: 8,
+                elevation: 8,
+                borderWidth: 0.5,
+              }}
+            />
+            <OutlinedTextField
               label="Product Name"
-              mode="outlined"
               value={pName}
               onChangeText={setName}
             />
-            <TextInput
+            <OutlinedTextField
+              label="Price"
+              keyboardType="phone-pad"
+              prefix="$"
+              value={pPrice}
+              onChangeText={setPrice}
+            />
+            <OutlinedTextField
+              label="Delivery Fee"
+              keyboardType="phone-pad"
+              prefix="$"
+              value={pDeliveryFee}
+              onChangeText={setDeliveryFee}
+            />
+            <OutlinedTextField
+              label="Discount"
+              keyboardType="phone-pad"
+              prefix="$"
+              value={pDiscount}
+              onChangeText={setDiscount}
+            />
+            <OutlinedTextField
               label="Quantity"
-              mode="outlined"
+              keyboardType="phone-pad"
               value={pQty}
               onChangeText={setQty}
-              keyboardType="numeric"
             />
-            <TextInput
-              label="Price"
-              mode="outlined"
-              value={pPrice}
-              left={<TextInput.Affix text="$" />}
-              onChangeText={setPrice}
-              keyboardType="numeric"
-            />
-            <TextInput
-              label="Delivery Fee"
-              mode="outlined"
-              value={pDeliveryFee}
-              left={<TextInput.Affix text="$" />}
-              onChangeText={setDeliveryFee}
-              keyboardType="numeric"
-            />
-            <TextInput
-              label="Discount"
-              mode="outlined"
-              value={pDiscount}
-              left={<TextInput.Affix text="$" />}
-              onChangeText={setDiscount}
-              keyboardType="numeric"
-            />
-            <TextInput
+            <OutlinedTextField
               label="Expected Delivery"
-              mode="outlined"
               value={pExpDelivery}
+              keyboardType="phone-pad"
               onChangeText={setExpDelivery}
-              keyboardType="numeric"
             />
             <Textarea
               containerStyle={styles.textareaContainer}
@@ -447,20 +477,7 @@ export default function UpdateProduct (props) {
               placeholderTextColor={'#c7c7c7'}
               underlineColorAndroid={'transparent'}
             />
-            <Dropdown
-              label="Select Category"
-              data={categories}
-              value={selectedCategory}
-              rippleCentered={true}
-              dropdownPosition={1}
-              onChangeText={item => setSelectedCategory (item)}
-              pickerStyle={{
-                width:wp(90),
-                marginHorizontal: 13,
-                borderRadius:8,
-                elevation:8,
-              }}
-            />
+
           </View>
           <View style={styles.btnorderview}>
             <TouchableOpacity
@@ -509,7 +526,6 @@ export default function UpdateProduct (props) {
               <TouchableOpacity
                 style={styles.modalContainer}
                 onPress={() => {
-                  // settextData ('');
                   toggleModal ();
                 }}
               >
@@ -543,7 +559,6 @@ const styles = StyleSheet.create ({
     height: hp (30),
     padding: 5,
     marginVertical: 15,
-    backgroundColor: '#ddd',
     borderRadius: 8,
     borderWidth: 0.7,
   },
@@ -617,9 +632,7 @@ const styles = StyleSheet.create ({
   modalView: {
     borderRadius: 8,
     backgroundColor: '#fff',
-    // padding: 10,
     paddingVertical: 15,
-    // paddingHorizontal:10,
     height: hp (20),
     width: wp (90),
     bottom: 0,
@@ -628,17 +641,26 @@ const styles = StyleSheet.create ({
   },
   modalContainer: {
     alignItems: 'center',
-    // borderRadius: 4,
     justifyContent: 'center',
     width: wp (90),
     height: hp (5),
-    // backgroundColor: '#ddd',
-    // marginHorizontal: 10,
     marginBottom: 5,
   },
   lineStyle: {
     backgroundColor: '#E0E0E0',
     height: 1,
     marginHorizontal: 10,
+  },
+  input: {
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingLeft: 20,
+    width: wp (90),
+    marginVertical: 10,
+  },
+  toplineStyle: {
+    marginTop: 10,
+    backgroundColor: '#E0E0E0',
+    height: 1,
   },
 });

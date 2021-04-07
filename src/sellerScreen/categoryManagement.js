@@ -30,6 +30,7 @@ export default function Category (props) {
   };
   useEffect (
     () => {
+      setLoading (true);
       const unsubscribe = props.navigation.addListener ('focus', () => {
         setLoading (true);
         const requestOptions = {
@@ -56,6 +57,7 @@ export default function Category (props) {
             setLoading (false);
           });
       });
+      setLoading (false);
       return unsubscribe;
     },
     [props.navigation]
@@ -164,7 +166,7 @@ export default function Category (props) {
       <View style={{flex: 1, backgroundColor: '#ffffff'}}>
         <View style={styles.headerContainer}>
           <View style={styles.headerCol}>
-            <Text style={styles.appName}>Category Management</Text>
+            <Text style={styles.appName}>Category</Text>
           </View>
         </View>
         <SafeAreaView>
@@ -238,7 +240,7 @@ export default function Category (props) {
       <View style={styles.Container}>
         <View style={styles.headerContainer}>
           <View style={styles.headerCol}>
-            <Text style={styles.appName}>Category Management</Text>
+            <Text style={styles.appName}>Category</Text>
           </View>
         </View>
 
@@ -249,7 +251,7 @@ export default function Category (props) {
           </Text>
         </View>
         <FAB
-          style={[styles.fab, {bottom: 50}]}
+          style={[styles.fab, {bottom: 70}]}
           small={false}
           icon="plus"
           onPress={toggleModal}

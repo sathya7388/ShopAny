@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -6,8 +6,10 @@ import {
   Pressable,
   Image,
   ScrollView,
+  TouchableOpacity,
+  TextInput,
+  StatusBar,
 } from 'react-native';
-import {TextInput} from 'react-native-paper';
 
 import {
   widthPercentageToDP as wp,
@@ -15,6 +17,7 @@ import {
 } from 'react-native-responsive-screen';
 
 function signUpScreen({navigation}) {
+  const [userType, setUser] = useState (1);
   const [shouldShow, setShouldShow] = useState (false);
 
   const [data1, setData] = useState ({
@@ -27,7 +30,10 @@ function signUpScreen({navigation}) {
     favourites: [],
     cart: [],
   });
-
+  useEffect (() => {
+    setUser (1);
+    setShouldShow (false);
+  }, []);
   function createUser () {
     const requestOptions = {
       method: 'POST',
@@ -41,7 +47,7 @@ function signUpScreen({navigation}) {
         email: data1.email,
         phoneNumber: data1.phoneNumber,
         address: data1.address,
-        userType: 1,
+        userType: userType,
         favourites: [],
         cart: [],
       }),
@@ -60,79 +66,106 @@ function signUpScreen({navigation}) {
   }
 
   return (
-    <ScrollView>
-      <View />
-      <View style={styles.body}>
-        <Image
-          style={styles.logo}
-          source={require ('../assets/images/shopAnyLogo.png')}
-        />
-        {/* <Text style={styles.text}>Register</Text> */}
-        {/* <View style={styles.btnorderview}>
-          <TouchableOpacity
-            style={styles.btnPlaceOrderContainer}
-            onPress={() => {
-              setShouldShow (true);
-            }}
-          >
-            <Text style={styles.items}>Seller</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.btnPlaceOrderContainer}
-            onPress={() => {
-              setShouldShow (false);
-            }}
-          >
-            <Text style={styles.items}>Buyer</Text>
-          </TouchableOpacity>
-        </View> */}
-        <View styles={{}}>
-          <TextInput
-            style={styles.input}
-            label="UserName"
-            onChangeText={text => setData ({...data1, name: text})}
+    <ScrollView style={styles.safeView}>
+      <StatusBar animated={true} backgroundColor="#00897b" hidden={false} />
+      <View style={styles.contTop}>
+        <View style={styles.contBBtm}>
+          <Image
+            style={styles.logo}
+            source={require ('../assets/images/shopAnyLogo.png')}
           />
-          <TextInput
-            style={styles.input}
-            label="Email"
-            onChangeText={text => setData ({...data1, email: text})}
-          />
-          <TextInput
-            style={styles.input}
-            label="Phone"
-            onChangeText={text => setData ({...data1, phoneNumber: text})}
-          />
-          <TextInput
-            style={styles.input}
-            secureTextEntry={true}
-            label="Password"
-            onChangeText={text => setData ({...data1, password: text})}
-          />
-
-          <TextInput
-            style={styles.input}
-            label="Address"
-            onChangeText={text => setData ({...data1, address: text})}
-          />
-          {shouldShow
-            ? <TextInput style={styles.input} label="Company" />
-            : null}
         </View>
-
-        <Pressable onPress={createUser} style={styles.button}>
-          <Text style={styles.buttonText}>Sign up</Text>
-        </Pressable>
-        <View style={styles.statement}>
-          <Pressable
-            onPress={() => {
-              navigation.navigate ('Login');
-            }}
+      </View>
+      <View style={styles.contBtm}>
+        <View style={styles.contTBtm}>
+          <View
+            style={[
+              styles.textContainer,
+              userType == 1
+                ? styles.txtContainerBuyer
+                : styles.txtContainerSeller,
+            ]}
           >
-            <Text>
-              Already a user?
-              <Text style={styles.register}> Log In</Text>
-            </Text>
-          </Pressable>
+            <View style={styles.tabView}>
+              <TouchableOpacity
+                style={[styles.btnPlaceOrderContainer]}
+                onPress={() => {
+                  setUser (1);
+                  setShouldShow (false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.items,
+                    userType == 1 ? styles.tabSelect : styles.tabNotSelect,
+                  ]}
+                >
+                  Customer
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btnPlaceOrderContainer]}
+                onPress={() => {
+                  setUser (2);
+                  setShouldShow (true);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.items,
+                    userType == 2 ? styles.tabSelect : styles.tabNotSelect,
+                  ]}
+                >
+                  Seller
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="UserName"
+              onChangeText={text => setData ({...data1, name: text})}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              onChangeText={text => setData ({...data1, email: text})}
+            />
+            <TextInput
+              style={styles.input}
+              secureTextEntry={true}
+              placeholder="Password"
+              onChangeText={text => setData ({...data1, password: text})}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Phone"
+              keyboardType="numeric"
+              onChangeText={text => setData ({...data1, phoneNumber: text})}
+            />
+            {shouldShow
+              ? <TextInput style={styles.input} placeholder="Company" />
+              : null}
+            <TextInput
+              style={styles.input}
+              placeholder="Address"
+              onChangeText={text => setData ({...data1, address: text})}
+            />
+            <Pressable onPress={createUser} style={styles.button}>
+              <Text style={styles.buttonText}>Sign up</Text>
+            </Pressable>
+            <View style={styles.statement}>
+              <Pressable
+                onPress={() => {
+                  navigation.navigate ('Login');
+                }}
+              >
+                <Text>
+                  Already a user?
+                  <Text style={styles.register}> Log In</Text>
+                </Text>
+              </Pressable>
+            </View>
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -140,77 +173,102 @@ function signUpScreen({navigation}) {
 }
 
 const styles = StyleSheet.create ({
-  body: {
-    backgroundColor: '#5AB568',
-    flex: 1,
-    height: hp (100),
+  contTop: {
+    backgroundColor: '#e1f5fe',
+    height: hp (15),
+    width: wp (100),
+  },
+  contBBtm: {
+    width: wp (100),
+    backgroundColor: '#81c784',
+    height: hp (15),
+    borderBottomLeftRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contBtm: {
+    backgroundColor: '#81c784',
+    height: hp (85),
+    width: wp (100),
+  },
+  contTBtm: {
+    backgroundColor: '#e1f5fe',
+    borderTopRightRadius: 40,
+    width: wp (100),
+    height: hp (85),
     alignItems: 'center',
   },
-  text: {
-    marginTop: -40,
-    color: 'white',
-    fontSize: 30,
-    textDecorationLine: 'underline',
+  textContainer: {
+    backgroundColor: '#fff',
+    width: wp (90),
+    height: hp (70),
+    margin: 30,
+    borderRadius: 20,
+    elevation: 8,
+    alignItems: 'center',
+  },
+  txtContainerSeller: {
+    height: hp (70),
+  },
+  txtContainerBuyer: {
+    height: hp (63),
+  },
+  tabView: {
+    flexDirection: 'row',
+  },
+  btnPlaceOrderContainer: {
+    flex: 1,
+    borderRadius: 2,
+    paddingVertical: 4,
+    height: hp (6),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  items: {
+    fontSize: 18,
+    // color: 'white',
+    alignSelf: 'center',
+  },
+  tabSelect: {
     fontWeight: 'bold',
-    marginBottom: 20,
+    color: '#1a237e',
+    textDecorationLine: 'underline',
+  },
+  tabNotSelect: {
+    color: '#bdbdbd',
   },
   input: {
-    padding: 5,
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingLeft: 20,
     width: wp (80),
     marginVertical: 10,
-    height: hp (6),
-    fontSize: 15,
+  },
+  statement: {
+    marginTop: 15,
+  },
+  register: {
+    color: '#000',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   logo: {
     width: 270,
     height: 170,
   },
   button: {
+    marginTop: 10,
     borderRadius: 5,
     alignItems: 'center',
-    width: 150,
-    color: 'white',
+    width: wp (50),
     padding: 5,
-    backgroundColor: '#064f19',
+    backgroundColor: '#81c784',
   },
   buttonText: {
     color: 'white',
     padding: 5,
     fontSize: 22,
     fontWeight: 'bold',
-  },
-  statement: {
-    marginTop: 20,
-  },
-  register: {
-    color: '#f2faf4',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  line: {
-    fontSize: 18,
-  },
-  btnorderview: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    paddingVertical: 10,
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  btnPlaceOrderContainer: {
-    elevation: 8,
-    backgroundColor: '#064f19',
-    borderRadius: 2,
-    paddingVertical: 4,
-    paddingHorizontal: 30,
-    color: 'white',
-    marginHorizontal: 20,
-    width: wp (40),
-  },
-  items: {
-    fontSize: 18,
-    color: 'white',
-    alignSelf: 'center',
   },
 });
 

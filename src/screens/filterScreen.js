@@ -12,6 +12,7 @@ import {
 export default class FilterScreen extends Component {
   constructor (props) {
     super (props);
+    LogBox.ignoreAllLogs ();
     this.state = {
       value: 'noPreference',
       fromPrice: '',
@@ -23,7 +24,6 @@ export default class FilterScreen extends Component {
     };
   }
   componentDidMount () {
-    LogBox.ignoreLogs (['Animated: `useNativeDriver`']);
     this.setState ({
       value: this.props.route.params.filter.sortBy,
       fromPrice: this.props.route.params.filter.fromPrice,
@@ -101,6 +101,7 @@ export default class FilterScreen extends Component {
             value={this.state.categoryData}
             rippleCentered={true}
             dropdownPosition={1}
+            itemCount={10}
             onChangeText={item => {
               this.selectComboId (item);
               this.setState ({categoryData: item});
@@ -112,17 +113,6 @@ export default class FilterScreen extends Component {
               elevation: 8,
             }}
           />
-          {/* <DropDownPicker
-            items={this.state.dropDownData}
-            defaultValue={this.state.categoryData}
-            containerStyle={{height: wp (10)}}
-            style={{backgroundColor: '#fafafa'}}
-            itemStyle={{
-              justifyContent: 'flex-start',
-            }}
-            dropDownStyle={{backgroundColor: '#fafafa'}}
-            onChangeItem={item => this.setState ({categoryData: item.value})}
-          /> */}
           <Text style={filterStyle.componentTitle}>Price</Text>
           <TextInput
             placeholder="From"

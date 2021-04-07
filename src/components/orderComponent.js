@@ -50,8 +50,6 @@ export default function OrderCard (props) {
     deliveryDate.getFullYear ();
   let sellerId = props.data.sellerId;
   let sellerNameValue = '';
-  console.log (sellerId);
-  console.log (props.data);
   for (var i = 0; i < Data.sellerName.length; i++) {
     if (Data.sellerName[i].id == sellerId) {
       sellerNameValue = Data.sellerName[i].name;
@@ -86,13 +84,20 @@ export default function OrderCard (props) {
           </Text>
         </View>
         <View style={orderStyle.soldContainer}>
-          <Text style={orderStyle.lblSellerName}>
-            Sold and Shipped By
+          {props.isSeller
+            ? <Text style={orderStyle.lblSellerName}>
+                Ordered by
+                <Text style={{fontWeight: 'bold'}}>
+                  {' ' + props.data.user.name}
+                </Text>
+              </Text>
+            : <Text style={orderStyle.lblSellerName}>
+                Sold and Shipped By
 
-            <Text style={{fontWeight: 'bold'}}>
-              {' ' + sellerNameValue}
-            </Text>
-          </Text>
+                <Text style={{fontWeight: 'bold'}}>
+                  {' ' + props.data.sellerId.name}
+                </Text>
+              </Text>}
         </View>
         <View style={orderStyle.lineStyle} />
         <View style={orderStyle.textRowContainer}>

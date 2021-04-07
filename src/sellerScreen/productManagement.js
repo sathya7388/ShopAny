@@ -23,7 +23,7 @@ export default function Product (props) {
   const [isLoading, setLoading] = useState (false);
   useEffect (
     () => {
-      // setLoading (true);
+      setLoading (true);
       const unsubscribe = props.navigation.addListener ('focus', () => {
         setLoading (true);
         const requestOptions = {
@@ -50,6 +50,7 @@ export default function Product (props) {
             setLoading (false);
           });
       });
+      setLoading (false);
       return unsubscribe;
     },
     [props.navigation]
@@ -71,8 +72,8 @@ export default function Product (props) {
         return response.json ();
       })
       .then (responseData => {
-        setVisible(true);
-        setMessage('Product Deleted')
+        setVisible (true);
+        setMessage ('Product Deleted');
         setProductData (responseData.products);
       })
       .catch (error => console.error (error))
@@ -92,7 +93,7 @@ export default function Product (props) {
       <View style={{flex: 1, backgroundColor: '#fff'}}>
         <View style={styles.headerContainer}>
           <View style={styles.headerCol}>
-            <Text style={styles.appName}>Product Management</Text>
+            <Text style={styles.appName}>Product</Text>
           </View>
         </View>
         <SafeAreaView>
@@ -108,6 +109,7 @@ export default function Product (props) {
                   flexGrow: 1,
                   justifyContent: 'center',
                   alignItems: 'center',
+                  paddingBottom: 60,
                 }}
               />}
 
@@ -132,12 +134,10 @@ export default function Product (props) {
       <View style={styles.Container}>
         <View style={styles.headerContainer}>
           <View style={styles.headerCol}>
-            <Text style={styles.appName}>Product Management</Text>
+            <Text style={styles.appName}>Product</Text>
           </View>
         </View>
-
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-
           <Text style={{fontWeight: 'bold', fontSize: hp (4)}}>
             Product is empty!
           </Text>
@@ -150,7 +150,7 @@ export default function Product (props) {
           {snackMessage}
         </Snackbar>
         <FAB
-          style={[styles.fab, {bottom: 50}]}
+          style={[styles.fab, {bottom: 70}]}
           small={false}
           icon="plus"
           onPress={addProduct}

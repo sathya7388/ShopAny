@@ -6,13 +6,13 @@ import {
 } from 'react-native-responsive-screen';
 
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import * as Data from '../data'
+import * as Data from '../data';
 
 function Profile({navigation}) {
-  var title = Data.currentUser[0].name.charAt(0).toUpperCase();;
-  function logOut(){
-    Data.currentUser.splice(Data.currentUser.length)
-    navigation.navigate('Login');
+  var title = Data.currentUser[0].name.charAt (0).toUpperCase ();
+  function logOut () {
+    Data.currentUser.splice (Data.currentUser.length);
+    navigation.navigate ('Login');
   }
 
   return (
@@ -23,7 +23,6 @@ function Profile({navigation}) {
           rounded
           title={title}
           containerStyle={{backgroundColor: 'gray'}}
-
         />
       </View>
       <View />
@@ -51,7 +50,7 @@ function Profile({navigation}) {
             <Text>Phone Number</Text>
           </View>
           <View style={styles.tableCol}>
-            <Text>{'+1 '+Data.currentUser[0].phoneNumber}</Text>
+            <Text>{'+1 ' + Data.currentUser[0].phoneNumber}</Text>
           </View>
         </View>
         <View style={styles.tlineStyle} />
@@ -115,7 +114,7 @@ const styles = StyleSheet.create ({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    marginVertical:40,
+    marginVertical: 40,
     marginHorizontal: 20,
   },
   tableRow: {
@@ -125,10 +124,10 @@ const styles = StyleSheet.create ({
     paddingHorizontal: 15,
   },
   tableCol: {
-    flex:1,
-    alignItems:'center',
+    flex: 1,
+    alignItems: 'center',
     flexDirection: 'column',
-    alignItems:'flex-start'
+    alignItems: 'flex-start',
   },
   text: {
     color: '#818181',

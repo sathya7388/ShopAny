@@ -42,7 +42,7 @@ export default class DetailScreen extends Component {
     };
   }
   componentDidMount () {
-    if (this.state.productData[0].quantity > 1) {
+    if (this.state.productData[0].quantity >= 1) {
       this.setState ({availabilty: 'In Stock', stockData: true});
     } else {
       this.setState ({availabilty: 'Currently Unavailable', stockData: false});

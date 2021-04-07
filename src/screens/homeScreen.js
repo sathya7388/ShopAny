@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import {Avatar} from 'react-native-elements';
 import Card from '../components/card';
@@ -193,37 +194,51 @@ export default class HomeScreen extends Component {
     const renderItem = ({item}) => <Card data={item} />;
     return (
       <SafeAreaView style={styles.safeView}>
+        <StatusBar animated={true} backgroundColor="#81c784" hidden={false} />
         <View style={styles.headerContainer}>
-          <Text style={styles.appName}>ShopAny</Text>
-          <TextInput
-            style={styles.searchBar}
-            onChangeText={this.searchHandler}
-            placeholder="Search"
-            clearButtonMode="always"
-          />
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate ('FilterScreen', {
-                filter: {
-                  category: this.state.filterCategory,
-                  fromPrice: this.state.fromPrice,
-                  toPrice: this.state.toPrice,
-                  sortBy: this.state.sortBy,
-                },
-              })}
+          <View
+            style={{
+              flexDirection: 'row',
+              marginVertical: 10,
+              alignItems: 'center',
+            }}
           >
-            <Image
-              source={require ('../assets/images/filter.png')}
-              style={styles.icon}
+            <Text style={styles.appName}>ShopAny</Text>
+            <View style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
+              <TouchableOpacity
+                onPress={() =>
+                  this.props.navigation.navigate ('FilterScreen', {
+                    filter: {
+                      category: this.state.filterCategory,
+                      fromPrice: this.state.fromPrice,
+                      toPrice: this.state.toPrice,
+                      sortBy: this.state.sortBy,
+                    },
+                  })}
+              >
+                <Image
+                  source={require ('../assets/images/filter.png')}
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+              <Avatar
+                size="small"
+                rounded
+                title={this.state.avatarTitle}
+                containerStyle={{backgroundColor: 'gray'}}
+                onPress={() => this.props.navigation.navigate ('ProfileScreen')}
+              />
+            </View>
+          </View>
+          <View>
+            <TextInput
+              style={styles.searchBar}
+              onChangeText={this.searchHandler}
+              placeholder="Search"
+              clearButtonMode="always"
             />
-          </TouchableOpacity>
-          <Avatar
-            size="small"
-            rounded
-            title={this.state.avatarTitle}
-            containerStyle={{backgroundColor: 'gray'}}
-            onPress={() => this.props.navigation.navigate ('ProfileScreen')}
-          />
+          </View>
+
         </View>
         {this.state.loading
           ? <View style={styles.activity}>
@@ -234,6 +249,9 @@ export default class HomeScreen extends Component {
               renderItem={renderItem}
               keyExtractor={item => item._id}
               numColumns={2}
+              contentContainerStyle={{
+                paddingBottom: 20,
+              }}
             />}
       </SafeAreaView>
     );
@@ -248,32 +266,38 @@ const styles = StyleSheet.create ({
   safeView: {
     backgroundColor: '#ffffff',
     height: hp (95),
-    paddingBottom:hp(2),
+    paddingBottom: hp (2),
   },
   headerContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
+    flexDirection: 'column',
+    backgroundColor: '#81c784',
     elevation: 8,
-    height: hp (8),
-    alignItems: 'center',
+    height: hp (15),
+    padding: 10,
+    // alignItems: 'center',
   },
   appName: {
+    flex: 4,
     marginLeft: 10,
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#008075',
+    color: '#fff',
   },
   searchBar: {
+    paddingBottom: 8,
     marginHorizontal: 10,
+    // marginBottom:5,
     borderColor: 'gray',
     borderWidth: 0.5,
-    width: wp (57),
+    width: wp (90),
     height: hp (5),
     borderRadius: 8,
+    backgroundColor: '#ffffff',
+    paddingLeft: 20,
   },
   icon: {
-    height: hp (2.5),
-    width: wp (6),
+    height: hp (3),
+    width: wp (7),
     justifyContent: 'flex-end',
     marginRight: 5,
   },

@@ -62,7 +62,7 @@ export default function CurrentOrderScreen (props) {
     [props.navigation]
   );
 
-  const renderItem = ({item}) => <OrderCard data={item} />;
+  const renderItem = ({item}) => <OrderCard data={item} isSeller={false} />;
   if (isLoading) {
     return (
       <View style={order.activity}>

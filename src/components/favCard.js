@@ -44,7 +44,10 @@ export default function FavCard({data, removeFromFav, addToCart}) {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={removeFav}
-          style={favStyle.btnPlaceOrderContainer}
+          style={[
+            favStyle.btnPlaceOrderContainer,
+            {backgroundColor: '#78909c'},
+          ]}
         >
           <Text style={favStyle.txtPlaceOrder}>Remove</Text>
         </TouchableOpacity>
